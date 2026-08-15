@@ -1,6 +1,7 @@
 name: release
 
-on:
+# `on` is quoted to avoid YAML 1.1 parsers coercing it to boolean `true`.
+"on":
   workflow_dispatch:
     inputs:
       version:
@@ -28,10 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
 
