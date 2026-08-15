@@ -1,0 +1,72 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'VS Code version to extract (e.g. 1.133.0). Leave empty for the latest stable.'
+        required: false
+        type: string
+      force:
+        description: 'Rebuild and overwrite the release even if it already exists.'
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    # Check for a new stable release twice a day (02:23 and 14:23 UTC).
+    - cron: '23 2,14 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Resolve VS Code version
+        id: resolve
+        run: |
+          VERSION="$(node scripts/resolve-version.mjs '${{ github.event.inputs.version }}')"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check for existing release
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Force flag set: rebuilding."
+          elif gh release view "vscode-${{ steps.resolve.outputs.version }}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Release vscode-${{ steps.resolve.outputs.version }} already exists; skipping."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build language servers
+        if: steps.check.outputs.skip == 'false'
+        run: node scripts/build.mjs "${{ steps.resolve.outputs.version }}"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.resolve.outputs.version }}"
+          gh release create "vscode-$VERSION" dist/*.tar.gz \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "VS Code $VERSION language servers" \
+            --notes "Extracted from microsoft/vscode at tag \`$VERSION\`. See the [README](https://github.com/$GITHUB_REPOSITORY#readme) for usage."
