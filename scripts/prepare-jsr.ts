@@ -352,16 +352,25 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
 }
 
 async function main() {
-  const version = Deno.args[0];
-  if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
-    console.error('Usage: deno run --allow-all scripts/prepare-jsr.ts <vscode-version>');
+  // <cloneTag> is the microsoft/vscode git tag to extract from (plain semver,
+  // e.g. `1.133.0`). <publishVersion> is the JSR package version (may carry a
+  // pre-release suffix for hotfixes, e.g. `1.133.0-hotfix.1`). When omitted it
+  // defaults to the clone tag.
+  const cloneTag = Deno.args[0];
+  const publishVersion = Deno.args[1] ?? cloneTag;
+  if (!cloneTag || !/^\d+\.\d+\.\d+$/.test(cloneTag)) {
+    console.error('Usage: deno run --allow-all scripts/prepare-jsr.ts <vscode-tag> [publish-version]');
+    Deno.exit(1);
+  }
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(publishVersion)) {
+    console.error(`Invalid publish version: ${publishVersion}`);
     Deno.exit(1);
   }
 
   const vscodeDir = join(ROOT, 'work', 'vscode');
   const jsrDir = join(ROOT, 'jsr');
 
-  ensureVscodeClone(version, vscodeDir);
+  ensureVscodeClone(cloneTag, vscodeDir);
 
   // Cone-mode sparse checkout always includes the repo-root files (e.g.
   // LICENSE.txt), so only the server directories need to be listed here.
@@ -389,11 +398,11 @@ async function main() {
   }
 
   // README for the JSR package page.
-  Deno.writeTextFileSync(join(jsrDir, 'README.md'), generateReadme(version));
+  Deno.writeTextFileSync(join(jsrDir, 'README.md'), generateReadme(publishVersion));
 
   const denoJson = {
     name: JSR_NAME,
-    version,
+    version: publishVersion,
     license: 'MIT',
     exports: Object.fromEntries(SERVERS.map((s) => [`./${s.name}`, s.entry])),
     compilerOptions: {

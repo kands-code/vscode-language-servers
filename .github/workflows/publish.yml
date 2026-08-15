@@ -5,7 +5,11 @@ name: publish
   workflow_dispatch:
     inputs:
       version:
-        description: "VS Code version to extract (e.g. 1.133.0). Leave empty for the latest stable."
+        description: "JSR version to publish (e.g. 1.133.1 or 1.133.0-hotfix.1). Leave empty for the latest VS Code stable."
+        required: false
+        type: string
+      vscode_tag:
+        description: "VS Code git tag to extract from (e.g. 1.133.0). Leave empty for the latest stable. Set explicitly when publishing a hotfix of an older release."
         required: false
         type: string
   schedule:
@@ -30,26 +34,34 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
 
-      - name: Resolve VS Code version
+      - name: Resolve versions
         id: resolve
         run: |
-          VERSION="$(deno run --allow-net scripts/resolve-version.ts '${{ github.event.inputs.version }}')"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          LATEST="$(deno run --allow-net scripts/resolve-version.ts '')"
+          # VS Code git tag to extract from.
+          CLONE="${{ github.event.inputs.vscode_tag }}"
+          [ -z "$CLONE" ] && CLONE="$LATEST"
+          # JSR package version (may carry a hotfix suffix).
+          VER="${{ github.event.inputs.version }}"
+          [ -z "$VER" ] && VER="$CLONE"
+          echo "clone=$CLONE" >> "$GITHUB_OUTPUT"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Resolved: vscode_tag=$CLONE jsr_version=$VER"
 
       - name: Check if version already published
         id: check
         run: |
-          VERSION="${{ steps.resolve.outputs.version }}"
-          if curl -sf "https://jsr.io/@qarks/vscode-language-servers/meta.json" | grep -q "\"$VERSION\""; then
+          VER="${{ steps.resolve.outputs.version }}"
+          if curl -sf "https://jsr.io/@qarks/vscode-language-servers/meta.json" | grep -q "\"$VER\""; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "JSR version $VERSION already published; skipping."
+            echo "JSR version $VER already published; skipping."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare JSR package
         if: steps.check.outputs.skip == 'false'
-        run: deno run --allow-all scripts/prepare-jsr.ts "${{ steps.resolve.outputs.version }}"
+        run: deno run --allow-all scripts/prepare-jsr.ts "${{ steps.resolve.outputs.clone }}" "${{ steps.resolve.outputs.version }}"
 
       - name: Publish to JSR
         if: steps.check.outputs.skip == 'false'
