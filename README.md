@@ -29,7 +29,8 @@ deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-langua
 Deno holds back releases younger than 24 hours; add `--minimum-dependency-age=0`
 to install right away.
 
-Each binary is an LSP server on stdio — no `--stdio` flag is needed.
+Each binary is an LSP server on stdio — no flags needed. `--stdio` and
+`--clientProcessId=<pid>` (exit when the parent dies) also work.
 
 ## Editor setup
 
@@ -83,6 +84,9 @@ Needs `git` and `deno`.
 - Published with `--no-check`: two `-next` npm packages pin conflicting exact
   versions Deno cannot deduplicate. This only affects type-checking; the servers
   run fine.
+- `--socket` / `--pipe` / `--node-ipc` are not usable: the pinned `-next`
+  packages implement the socket/pipe transports backwards, and Deno has no IPC
+  channel.
 - Two JSR score items must be set by hand in the package settings on jsr.io:
   **Description** and **Runtime compatibility → Deno**.
 

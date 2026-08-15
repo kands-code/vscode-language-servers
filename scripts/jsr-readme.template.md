@@ -14,7 +14,8 @@ deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-langua
 
 ## Usage
 
-Each binary is an LSP server on stdio — no `--stdio` flag is needed.
+Each binary is an LSP server on stdio — no flags needed. `--stdio` and
+`--clientProcessId=<pid>` (exit when the parent dies) also work.
 
 ### Neovim (lspconfig)
 

@@ -261,15 +261,26 @@ function moduleDoc(name: string): string {
 `;
 }
 
-// Default the connection to stdio (no --stdio flag needed) and prepend the
-// module doc.
+// Keep the stock transport flags (--stdio / --socket / --pipe / --node-ipc),
+// defaulting to stdio when none is given, and prepend the module doc.
 function patchEntrypoint(dest: string, name: string) {
   const file = join(dest, "node", `${name}ServerMain.ts`);
   let src = Deno.readTextFileSync(file);
-  src = src.replace(
-    "createConnection()",
-    "createConnection(process.stdin, process.stdout)",
+  const guard = [
+    "if (!process.argv.slice(2).some((a) =>",
+    "\t\ta === '--stdio' || a === '--node-ipc' || a.startsWith('--socket') || a.startsWith('--pipe'))) {",
+    "\tprocess.argv.push('--stdio');",
+    "}",
+    "const connection: Connection = createConnection();",
+  ].join("\n");
+  const patched = src.replace(
+    "const connection: Connection = createConnection();",
+    guard,
   );
+  if (patched === src) {
+    throw new Error(`createConnection() not found in ${file}`);
+  }
+  src = patched;
   if (!src.includes("@module")) {
     src = moduleDoc(name) + "\n" + src;
   }
