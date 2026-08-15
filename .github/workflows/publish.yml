@@ -5,15 +5,16 @@ name: publish
   workflow_dispatch:
     inputs:
       version:
-        description: 'VS Code version to extract (e.g. 1.133.0). Leave empty for the latest stable.'
+        description: "VS Code version to extract (e.g. 1.133.0). Leave empty for the latest stable."
         required: false
         type: string
   schedule:
     # Check for a new stable release twice a day (02:23 and 14:23 UTC).
-    - cron: '23 2,14 * * *'
+    - cron: "23 2,14 * * *"
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: publish

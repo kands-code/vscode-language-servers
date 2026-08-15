@@ -7,7 +7,8 @@
  *   deno run --allow-all scripts/prepare-jsr.ts <vscode-version>
  *
  * What it does:
- *   1. Reads each server's src/ from the (already cloned) work/vscode tree.
+ *   0. Shallow-sparse-clones microsoft/vscode at the given release tag.
+ *   1. Reads each server's src/ from the cloned work/vscode tree.
  *   2. Copies the node/server sources into `jsr/<css|html|json>/`, dropping
  *      `browser/`, `test/` and `*.test.ts` files.
  *   3. Rewrites import specifiers for Deno/JSR:
@@ -224,6 +225,45 @@ async function prepareServer(
   });
 }
 
+/**
+ * Ensure `vscodeDir` contains microsoft/vscode at the requested release tag,
+ * reusing an existing clone when possible and retrying transient clone
+ * failures a few times.
+ */
+function ensureVscodeClone(version: string, vscodeDir: string) {
+  try {
+    Deno.statSync(join(vscodeDir, '.git'));
+    const r = new Deno.Command('git', {
+      args: ['-C', vscodeDir, 'describe', '--tags', '--exact-match'],
+      stdout: 'piped',
+      stderr: 'piped',
+    }).outputSync();
+    if (r.success && new TextDecoder().decode(r.stdout).trim() === version) {
+      console.log(`Reusing existing microsoft/vscode clone @ ${version}`);
+      return;
+    }
+    Deno.removeSync(vscodeDir, { recursive: true });
+  } catch {
+    /* not cloned yet */
+  }
+
+  const args = [
+    'clone', '--depth', '1', '--branch', version,
+    '--filter=blob:none', '--sparse',
+    'https://github.com/microsoft/vscode.git', vscodeDir,
+  ];
+  let lastStatus: number | null = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    console.log(`Cloning microsoft/vscode @ ${version} (attempt ${attempt}/3, shallow + sparse)…`);
+    const r = new Deno.Command('git', { args, stdout: 'inherit', stderr: 'inherit' }).outputSync();
+    if (r.success) return;
+    lastStatus = r.code;
+    Deno.removeSync(vscodeDir, { recursive: true });
+    console.warn(`  clone failed (exit ${r.code}); retrying…`);
+  }
+  throw new Error(`git clone failed after 3 attempts (last exit ${lastStatus})`);
+}
+
 async function main() {
   const version = Deno.args[0];
   if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
@@ -233,6 +273,19 @@ async function main() {
 
   const vscodeDir = join(ROOT, 'work', 'vscode');
   const jsrDir = join(ROOT, 'jsr');
+
+  ensureVscodeClone(version, vscodeDir);
+
+  // Cone-mode sparse checkout always includes the repo-root files (e.g.
+  // LICENSE.txt), so only the server directories need to be listed here.
+  const sparse = new Deno.Command('git', {
+    args: ['-C', vscodeDir, 'sparse-checkout', 'set', ...SERVERS.map((s) => s.serverDir)],
+    stdout: 'inherit',
+    stderr: 'inherit',
+  }).outputSync();
+  if (!sparse.success) {
+    throw new Error(`git sparse-checkout failed (exit ${sparse.code})`);
+  }
 
   await Deno.remove(jsrDir, { recursive: true }).catch(() => {});
   await Deno.mkdir(jsrDir, { recursive: true });
