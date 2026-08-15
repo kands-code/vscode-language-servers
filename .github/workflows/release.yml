@@ -31,6 +31,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -39,7 +42,7 @@ jobs:
       - name: Resolve VS Code version
         id: resolve
         run: |
-          VERSION="$(node scripts/resolve-version.mjs '${{ github.event.inputs.version }}')"
+          VERSION="$(deno run --allow-net scripts/resolve-version.ts '${{ github.event.inputs.version }}')"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check for existing release
@@ -57,9 +60,25 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build language servers
+      - name: Build language servers (Node tarballs)
         if: steps.check.outputs.skip == 'false'
-        run: node scripts/build.mjs "${{ steps.resolve.outputs.version }}"
+        run: deno run --allow-all scripts/build.ts "${{ steps.resolve.outputs.version }}"
+
+      - name: Prepare JSR package
+        if: steps.check.outputs.skip == 'false'
+        run: deno run --allow-all scripts/prepare-jsr.ts "${{ steps.resolve.outputs.version }}"
+
+      - name: Publish to JSR
+        if: steps.check.outputs.skip == 'false'
+        env:
+          DENO_AUTH_TOKEN: ${{ secrets.DENO_AUTH_TOKEN }}
+        run: |
+          if [ -z "$DENO_AUTH_TOKEN" ]; then
+            echo "DENO_AUTH_TOKEN secret is not set; skipping JSR publish."
+          else
+            cd jsr
+            deno publish --no-check --allow-dirty
+          fi
 
       - name: Create GitHub Release
         if: steps.check.outputs.skip == 'false'

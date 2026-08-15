@@ -1,6 +1,7 @@
 # build artifacts
 work/
 dist/
+jsr/
 
 # local tooling
 node_modules/
