@@ -2,7 +2,7 @@
 
 CSS, HTML, and JSON language servers extracted from
 [microsoft/vscode](https://github.com/microsoft/vscode), published to JSR for
-Deno. Version `{{version}}` tracks VS Code `{{version}}`.
+Deno. Version `{{version}}` tracks VS Code `{{vscodeVersion}}`.
 
 ## Install
 

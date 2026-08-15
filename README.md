@@ -59,14 +59,14 @@ language-servers = ["css-ls"]
 day and on manual trigger. It finds the latest VS Code release, skips versions
 already on JSR, and otherwise:
 
-1. clones that release of microsoft/vscode (shallow, sparse),
-2. runs `scripts/prepare-jsr.ts`, which copies the three servers into `jsr/`,
-   rewrites their imports for Deno, patches one type-only CSS conflict, and
-   writes `deno.json` + README,
-3. type-checks the generated package with `deno check`,
-4. runs `scripts/smoke-test.ts`, which starts each server and completes an LSP
+1. runs `scripts/prepare-jsr.ts`, which clones that release of microsoft/vscode
+   (shallow, sparse), copies the three servers into `jsr/`, rewrites their
+   imports for Deno, patches one type-only CSS conflict, and writes `deno.json`
+   + README,
+2. type-checks the generated package with `deno check`,
+3. runs `scripts/smoke-test.ts`, which starts each server and completes an LSP
    initialize/shutdown handshake over stdio,
-5. publishes to JSR with `deno publish --check`.
+4. publishes to JSR with `deno publish --check`.
 
 Needs one secret: `DENO_AUTH_TOKEN` (a JSR publish token).
 
@@ -87,10 +87,11 @@ Needs `git` and `deno`.
 
 ## Notes
 
-- The HTML server imports `typescript` for embedded `<script>` completion. VS
-  Code ships a newer native preview that is not a drop-in for the API the server
-  uses, so this repo pins `typescript@5.9.x`. Embedded JS/TS completion is
-  best-effort; HTML features are unaffected.
+- The HTML server imports `typescript` for embedded `<script>` completion. It is
+  pinned to the last JavaScript-based TypeScript (`6.0.x`): npm's `typescript@7`
+  is the Go-based native compiler and is not a drop-in for the JS `ts.*`
+  LanguageService API the server uses. Embedded JS/TS completion is best-effort;
+  HTML features are unaffected.
 - The CSS server is type-checked with a single compatibility cast:
   `vscode-css-languageservice` pins `vscode-languageserver-types@3.17.5` exactly
   while `vscode-languageserver@next` pulls `3.17.6-next.7`, so the LSP

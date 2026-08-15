@@ -10,7 +10,10 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const JSR_NAME = "@qarks/vscode-language-servers";
-const TS_VERSION = "5.9.3";
+// Pinned to the last JavaScript-based TypeScript. npm's `typescript@7` is the
+// Go-based native compiler and is not a drop-in for the JS `ts.*` LanguageService
+// API that html/modes/javascriptMode.ts relies on for embedded <script> completion.
+const TS_VERSION = "6.0.3";
 
 const SERVERS = [
   {
@@ -311,9 +314,10 @@ function patchCssServer(dest: string) {
 }
 
 /** README.md shipped in the JSR package, from the template file. */
-function generateReadme(version: string): string {
+function generateReadme(version: string, vscodeVersion: string): string {
   return Deno.readTextFileSync(join(ROOT, "scripts", "jsr-readme.template.md"))
-    .replaceAll("{{version}}", version);
+    .replaceAll("{{version}}", version)
+    .replaceAll("{{vscodeVersion}}", vscodeVersion);
 }
 
 async function prepareServer(
@@ -470,7 +474,7 @@ async function main() {
   // README for the JSR package page.
   Deno.writeTextFileSync(
     join(jsrDir, "README.md"),
-    generateReadme(publishVersion),
+    generateReadme(publishVersion, cloneTag),
   );
 
   const denoJson = {
