@@ -33,6 +33,12 @@ const SERVERS = [
   { name: 'json', serverDir: 'extensions/json-language-features/server', entry: './json/node/jsonServerMain.ts' },
 ];
 
+const LABELS: Record<string, string> = {
+  css: 'CSS / LESS / SCSS',
+  html: 'HTML',
+  json: 'JSON / JSONC',
+};
+
 const NODE_BUILTINS = new Set([
   'fs', 'path', 'os', 'url', 'util', 'crypto', 'buffer', 'child_process',
   'stream', 'events', 'http', 'https', 'net', 'tls', 'zlib', 'assert',
@@ -191,6 +197,85 @@ export function loadLibrary(name: string) {
 `;
 }
 
+/** Module doc for a server entrypoint (satisfies JSR's module-doc score). */
+function moduleDoc(name: string): string {
+  const bin = `vscode-${name}-language-server`;
+  return `/**
+ * ${LABELS[name]} language server extracted from VS Code.
+ *
+ * Starts a Language Server Protocol (LSP) server over stdio using
+ * \`vscode-${name}-languageservice\`. No \`--stdio\` flag is required.
+ *
+ * @example
+ * \`\`\`sh
+ * deno install --global -A -n ${bin} jsr:${JSR_NAME}/${name}
+ * \`\`\`
+ *
+ * @module
+ */
+`;
+}
+
+/**
+ * Patch a server entrypoint: default the connection to stdio (so clients do
+ * not need to pass `--stdio`) and prepend a module doc.
+ */
+function patchEntrypoint(dest: string, name: string) {
+  const file = join(dest, 'node', `${name}ServerMain.ts`);
+  let src = Deno.readTextFileSync(file);
+  src = src.replace('createConnection()', 'createConnection(process.stdin, process.stdout)');
+  if (!src.includes('@module')) {
+    src = moduleDoc(name) + '\n' + src;
+  }
+  Deno.writeTextFileSync(file, src);
+}
+
+/** README.md shipped in the JSR package (satisfies JSR's readme/example score). */
+function generateReadme(version: string): string {
+  return `# @qarks/vscode-language-servers
+
+CSS, HTML, and JSON language servers extracted from
+[microsoft/vscode](https://github.com/microsoft/vscode), published to JSR for
+Deno. Version \`${version}\` tracks VS Code \`${version}\`.
+
+## Install
+
+\`\`\`sh
+deno install --global -A -n vscode-css-language-server jsr:@qarks/vscode-language-servers/css
+deno install --global -A -n vscode-html-language-server jsr:@qarks/vscode-language-servers/html
+deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-language-servers/json
+\`\`\`
+
+## Usage
+
+Each installed binary is a stdio Language Server. Point your LSP client at it —
+no \`--stdio\` flag is required.
+
+### Helix
+
+\`\`\`toml
+[language-server.css-ls]
+command = "vscode-css-language-server"
+
+[[language]]
+name = "css"
+language-servers = ["css-ls"]
+\`\`\`
+
+### Neovim (lspconfig)
+
+\`\`\`lua
+require('lspconfig').cssls.setup {
+  cmd = { '/path/to/vscode-css-language-server' },
+}
+\`\`\`
+
+## License
+
+MIT. Extracted server code is © Microsoft Corporation.
+`;
+}
+
 async function prepareServer(
   server: { name: string; serverDir: string },
   vscodeDir: string,
@@ -223,6 +308,8 @@ async function prepareServer(
     const out = rewriteFile(src, versions);
     if (out !== src) Deno.writeTextFileSync(file, out);
   });
+
+  patchEntrypoint(dest, name);
 }
 
 /**
@@ -301,6 +388,9 @@ async function main() {
     console.warn('  [warn] VS Code LICENSE.txt not found; skipping license copy');
   }
 
+  // README for the JSR package page.
+  Deno.writeTextFileSync(join(jsrDir, 'README.md'), generateReadme(version));
+
   const denoJson = {
     name: JSR_NAME,
     version,
@@ -320,6 +410,7 @@ async function main() {
         'html/',
         'json/',
         'deno.json',
+        'README.md',
         'LICENSE.txt',
       ],
     },

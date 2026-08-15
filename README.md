@@ -17,18 +17,28 @@ A modern, Deno-native successor to [`hrsh7th/vscode-langservers-extracted`](http
 ## Install
 
 ```sh
-deno install -A -n vscode-css-language-server jsr:@qarks/vscode-language-servers/css
-deno install -A -n vscode-html-language-server jsr:@qarks/vscode-language-servers/html
-deno install -A -n vscode-json-language-server jsr:@qarks/vscode-language-servers/json
+deno install --global -A -n vscode-css-language-server jsr:@qarks/vscode-language-servers/css
+deno install --global -A -n vscode-html-language-server jsr:@qarks/vscode-language-servers/html
+deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-language-servers/json
 ```
 
-Each installs a `~/.deno/bin/vscode-*-language-server` wrapper. Point your LSP client at it and pass `--stdio`. Requires Deno (the npm dependencies are fetched on first run).
+Each installs a `~/.deno/bin/vscode-*-language-server` wrapper. Requires Deno
+(npm dependencies are fetched on first run).
+
+> **`-n` 名字**：`deno install` 无法从单个 JSR 包自动推导出
+> `vscode-css-language-server` 这样的名字（默认会用包名 `vscode-language-servers`），
+> 所以必须用 `-n` 指定。若想免 `-n`，需拆成三个独立 JSR 包，代价较大，故保留单包 + `-n`。
+>
+> **新发布 24 小时内**：Deno 2.9+ 对 JSR 有 24 小时"minimum dependency age"，
+> 刚发布的版本会被拒。可加 `--minimum-dependency-age=0` 立即安装，或等 24 小时后去掉。
+
+These servers speak LSP over **stdio by default** — no `--stdio` flag is needed.
 
 ### Neovim (lspconfig)
 
 ```lua
 require('lspconfig').cssls.setup {
-  cmd = { '/Users/you/.deno/bin/vscode-css-language-server', '--stdio' },
+  cmd = { '/Users/you/.deno/bin/vscode-css-language-server' },
 }
 ```
 
@@ -39,7 +49,6 @@ In `languages.toml`:
 ```toml
 [language-server.css-ls]
 command = "vscode-css-language-server"
-args = ["--stdio"]
 
 [[language]]
 name = "css"
@@ -88,6 +97,17 @@ Requires `git` and `deno`.
 - For Deno, type-only re-exports (e.g. `Definition`) are rewritten to
   `export type`, and the html `javascriptLibs.ts` is patched to resolve the
   TypeScript lib directory via Deno's npm resolution.
+
+## JSR score
+
+The package ships a `README.md`, examples, and `@module` docs on every entrypoint.
+Two score items must be set manually in the JSR **package settings** (they cannot
+be expressed in `deno.json`):
+
+- **Description** — jsr.io → `@qarks/vscode-language-servers` → **Settings → Description**.
+- **Runtime compatibility** — same **Settings** tab, mark **Deno** as compatible.
+  (The package uses `npm:` specifiers and Deno's `import.meta.resolve`, so it is
+  Deno-only; we intentionally do not claim Node/Bun compatibility.)
 
 ## License
 
