@@ -61,8 +61,12 @@ already on JSR, and otherwise:
 
 1. clones that release of microsoft/vscode (shallow, sparse),
 2. runs `scripts/prepare-jsr.ts`, which copies the three servers into `jsr/`,
-   rewrites their imports for Deno, and writes `deno.json` + README,
-3. publishes to JSR.
+   rewrites their imports for Deno, patches one type-only CSS conflict, and
+   writes `deno.json` + README,
+3. type-checks the generated package with `deno check`,
+4. runs `scripts/smoke-test.ts`, which starts each server and completes an LSP
+   initialize/shutdown handshake over stdio,
+5. publishes to JSR with `deno publish --check`.
 
 Needs one secret: `DENO_AUTH_TOKEN` (a JSR publish token).
 
@@ -70,7 +74,13 @@ Needs one secret: `DENO_AUTH_TOKEN` (a JSR publish token).
 
 ```sh
 deno run --allow-all scripts/prepare-jsr.ts 1.133.0   # writes jsr/
-deno publish --dry-run --no-check --allow-dirty       # from jsr/
+
+# type-check and smoke-test the generated package
+cd jsr
+deno check css/node/cssServerMain.ts html/node/htmlServerMain.ts json/node/jsonServerMain.ts
+cd ..
+
+deno run --allow-all scripts/smoke-test.ts
 ```
 
 Needs `git` and `deno`.
@@ -81,14 +91,14 @@ Needs `git` and `deno`.
   Code ships a newer native preview that is not a drop-in for the API the server
   uses, so this repo pins `typescript@5.9.x`. Embedded JS/TS completion is
   best-effort; HTML features are unaffected.
-- Published with `--no-check`: two `-next` npm packages pin conflicting exact
-  versions Deno cannot deduplicate. This only affects type-checking; the servers
-  run fine.
+- The CSS server is type-checked with a single compatibility cast:
+  `vscode-css-languageservice` pins `vscode-languageserver-types@3.17.5` exactly
+  while `vscode-languageserver@next` pulls `3.17.6-next.7`, so the LSP
+  `CodeActionContext` types differ. The generated code is patched at the one
+  boundary where that matters, which lets publishing use `--check`.
 - `--socket` / `--pipe` / `--node-ipc` are not usable: the pinned `-next`
   packages implement the socket/pipe transports backwards, and Deno has no IPC
   channel.
-- Two JSR score items must be set by hand in the package settings on jsr.io:
-  **Description** and **Runtime compatibility → Deno**.
 
 ## License
 

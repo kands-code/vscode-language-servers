@@ -37,7 +37,12 @@ jobs:
       - name: Resolve versions
         id: resolve
         run: |
-          LATEST="$(deno run --allow-net scripts/resolve-version.ts)"
+          # Only query the update API when the VS Code tag is not pinned.
+          if [ -z "${{ github.event.inputs.vscode_tag }}" ]; then
+            LATEST="$(deno run --allow-net scripts/resolve-version.ts)"
+          else
+            LATEST=""
+          fi
           CLONE="${{ github.event.inputs.vscode_tag }}"
           [ -z "$CLONE" ] && CLONE="$LATEST"
           VER="${{ github.event.inputs.version }}"
@@ -50,16 +55,23 @@ jobs:
         id: check
         run: |
           VER="${{ steps.resolve.outputs.version }}"
-          if curl -sf "https://jsr.io/@qarks/vscode-language-servers/meta.json" | grep -q "\"$VER\""; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Version $VER is already on JSR; skipping."
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
+          CHECK="$(deno run --allow-net scripts/jsr-version-exists.ts "$VER")"
+          echo "$CHECK" >> "$GITHUB_OUTPUT"
+          echo "$CHECK"
 
       - name: Prepare JSR package
         if: steps.check.outputs.skip == 'false'
         run: deno run --allow-all scripts/prepare-jsr.ts "${{ steps.resolve.outputs.clone }}" "${{ steps.resolve.outputs.version }}"
+
+      - name: Type-check generated package
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cd jsr
+          deno check css/node/cssServerMain.ts html/node/htmlServerMain.ts json/node/jsonServerMain.ts
+
+      - name: Smoke test language servers
+        if: steps.check.outputs.skip == 'false'
+        run: deno run --allow-all scripts/smoke-test.ts
 
       - name: Publish to JSR
         if: steps.check.outputs.skip == 'false'
@@ -67,4 +79,4 @@ jobs:
           DENO_AUTH_TOKEN: ${{ secrets.DENO_AUTH_TOKEN }}
         run: |
           cd jsr
-          deno publish --no-check --allow-dirty
+          deno publish --check --allow-dirty

@@ -122,8 +122,8 @@ function rewriteFile(content: string, versions: Map<string, string>): string {
   );
   // Re-exports: move type-only names into `export type`.
   s = s.replace(
-    /(\bexport\s*\{)([^}]*)(\}\s*from\s*)(['"])([^'"]+)\4(;?)/g,
-    (_m, pre, namesStr, mid, q, spec, semi) => {
+    /\bexport\s*\{([^}]*)\}\s*from\s*(['"])([^'"]+)\2(;?)/g,
+    (_m, namesStr, q, spec, semi) => {
       const { typeOnly, value } = splitTypeValue(namesStr);
       if (typeOnly.length === 0) return _m;
       const s2 = rewriteSpecifier(spec, versions);
@@ -170,7 +170,10 @@ async function copyServerSrc(srcDir: string, destDir: string) {
   }
 }
 
-async function walkTs(dir: string, fn: (file: string) => Promise<void>) {
+async function walkTs(
+  dir: string,
+  fn: (file: string) => void | Promise<void>,
+) {
   for await (const entry of Deno.readDir(dir)) {
     const p = join(dir, entry.name);
     if (entry.isDirectory) await walkTs(p, fn);
@@ -287,6 +290,26 @@ function patchEntrypoint(dest: string, name: string) {
   Deno.writeTextFileSync(file, src);
 }
 
+/**
+ * vscode-css-languageservice pins vscode-languageserver-types@3.17.5 exactly
+ * while vscode-languageserver@next pulls 3.17.6-next.7. Their Diagnostic types
+ * differ (message: string vs string | MarkupContent), which makes `deno check`
+ * fail at the doCodeActions2 call even though the runtime values are
+ * compatible. Cast the single boundary argument so publishing can use --check.
+ */
+function patchCssServer(dest: string) {
+  const file = join(dest, "cssServer.ts");
+  const src = Deno.readTextFileSync(file);
+  const oldCall =
+    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context, stylesheet);";
+  const newCall =
+    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context as any, stylesheet);";
+  if (!src.includes(oldCall)) {
+    throw new Error(`Could not find doCodeActions2 call to patch in ${file}`);
+  }
+  Deno.writeTextFileSync(file, src.replace(oldCall, newCall));
+}
+
 /** README.md shipped in the JSR package, from the template file. */
 function generateReadme(version: string): string {
   return Deno.readTextFileSync(join(ROOT, "scripts", "jsr-readme.template.md"))
@@ -328,13 +351,14 @@ async function prepareServer(
     );
   }
 
-  await walkTs(dest, async (file) => {
+  await walkTs(dest, (file) => {
     const src = Deno.readTextFileSync(file);
     const out = rewriteFile(src, versions);
     if (out !== src) Deno.writeTextFileSync(file, out);
   });
 
   patchEntrypoint(dest, name);
+  if (name === "css") patchCssServer(dest);
 }
 
 /** Clone microsoft/vscode at the release tag, reusing an existing clone. */
