@@ -1,6 +1,5 @@
 # build artifacts
 work/
-dist/
 jsr/
 
 # local tooling

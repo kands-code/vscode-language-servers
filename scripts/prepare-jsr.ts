@@ -241,6 +241,13 @@ async function main() {
     await prepareServer(server, vscodeDir, jsrDir);
   }
 
+  // Ship VS Code's MIT license notice with the extracted code.
+  try {
+    await Deno.copyFile(join(vscodeDir, 'LICENSE.txt'), join(jsrDir, 'LICENSE.txt'));
+  } catch {
+    console.warn('  [warn] VS Code LICENSE.txt not found; skipping license copy');
+  }
+
   const denoJson = {
     name: JSR_NAME,
     version,
@@ -251,6 +258,17 @@ async function main() {
       // on catch variables being typed as `any` (not `unknown`).
       useUnknownInCatchVariables: false,
       exactOptionalPropertyTypes: false,
+    },
+    publish: {
+      // `jsr/` is gitignored (generated), so explicitly list the files to
+      // publish. This overrides the gitignore exclusion.
+      include: [
+        'css/',
+        'html/',
+        'json/',
+        'deno.json',
+        'LICENSE.txt',
+      ],
     },
   };
   Deno.writeTextFileSync(join(jsrDir, 'deno.json'), JSON.stringify(denoJson, null, 2) + '\n');
