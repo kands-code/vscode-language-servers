@@ -25,12 +25,16 @@ deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-langua
 Each installs a `~/.deno/bin/vscode-*-language-server` wrapper. Requires Deno
 (npm dependencies are fetched on first run).
 
-> **`-n` 名字**：`deno install` 无法从单个 JSR 包自动推导出
-> `vscode-css-language-server` 这样的名字（默认会用包名 `vscode-language-servers`），
-> 所以必须用 `-n` 指定。若想免 `-n`，需拆成三个独立 JSR 包，代价较大，故保留单包 + `-n`。
+> **The `-n` name**: `deno install` cannot infer a name like
+> `vscode-css-language-server` from a single JSR package (it defaults to the
+> package name `vscode-language-servers`), so `-n` is required. Avoiding it
+> would mean splitting into three separate JSR packages, which is more
+> maintenance than it's worth for a single package.
 >
-> **新发布 24 小时内**：Deno 2.9+ 对 JSR 有 24 小时"minimum dependency age"，
-> 刚发布的版本会被拒。可加 `--minimum-dependency-age=0` 立即安装，或等 24 小时后去掉。
+> **Within 24 hours of a new release**: Deno 2.9+ applies a 24-hour "minimum
+> dependency age" to JSR packages, so a freshly published version is rejected.
+> Add `--minimum-dependency-age=0` to install immediately, or wait 24 hours and
+> drop the flag.
 
 These servers speak LSP over **stdio by default** — no `--stdio` flag is needed.
 
