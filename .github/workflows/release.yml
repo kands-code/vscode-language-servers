@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -50,12 +50,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          TAG="vscode-${{ steps.resolve.outputs.version }}"
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
             echo "skip=false" >> "$GITHUB_OUTPUT"
             echo "Force flag set: rebuilding."
-          elif gh release view "vscode-${{ steps.resolve.outputs.version }}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          # Check the git tag (not just the release), because `gh release create`
+          # fails if a tag exists even when no release is attached to it.
+          elif git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Release vscode-${{ steps.resolve.outputs.version }} already exists; skipping."
+            echo "Tag $TAG already exists; skipping."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
@@ -76,8 +79,15 @@ jobs:
           if [ -z "$DENO_AUTH_TOKEN" ]; then
             echo "DENO_AUTH_TOKEN secret is not set; skipping JSR publish."
           else
+            set -o pipefail
             cd jsr
-            deno publish --no-check --allow-dirty
+            if deno publish --no-check --allow-dirty 2>&1 | tee /tmp/jsr-publish.log; then
+              echo "Published to JSR."
+            elif grep -qiE "already (been )?published|already exists" /tmp/jsr-publish.log; then
+              echo "JSR version already published; continuing."
+            else
+              exit 1
+            fi
           fi
 
       - name: Create GitHub Release
@@ -86,7 +96,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ steps.resolve.outputs.version }}"
-          gh release create "vscode-$VERSION" dist/*.tar.gz \
+          TAG="vscode-$VERSION"
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            gh release delete "$TAG" --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
+          fi
+          gh release create "$TAG" dist/*.tar.gz \
             --repo "$GITHUB_REPOSITORY" \
             --title "VS Code $VERSION language servers" \
             --notes "Extracted from microsoft/vscode at tag \`$VERSION\`. See the [README](https://github.com/$GITHUB_REPOSITORY#readme) for usage."
