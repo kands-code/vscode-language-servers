@@ -1,8 +1,10 @@
-# build artifacts
-work/
+# generated
+# JSR package built by scripts/prepare-jsr.ts
 jsr/
+# vscode clone and local caches
+work/
 
-# local tooling
+# local
 node_modules/
 *.log
 .DS_Store

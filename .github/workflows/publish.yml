@@ -1,6 +1,6 @@
 name: publish
 
-# `on` is quoted to avoid YAML 1.1 parsers coercing it to boolean `true`.
+# Quoted so YAML does not read `on` as boolean true.
 "on":
   workflow_dispatch:
     inputs:
@@ -37,24 +37,22 @@ jobs:
       - name: Resolve versions
         id: resolve
         run: |
-          LATEST="$(deno run --allow-net scripts/resolve-version.ts '')"
-          # VS Code git tag to extract from.
+          LATEST="$(deno run --allow-net scripts/resolve-version.ts)"
           CLONE="${{ github.event.inputs.vscode_tag }}"
           [ -z "$CLONE" ] && CLONE="$LATEST"
-          # JSR package version (may carry a hotfix suffix).
           VER="${{ github.event.inputs.version }}"
           [ -z "$VER" ] && VER="$CLONE"
           echo "clone=$CLONE" >> "$GITHUB_OUTPUT"
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "Resolved: vscode_tag=$CLONE jsr_version=$VER"
 
-      - name: Check if version already published
+      - name: Skip if already published
         id: check
         run: |
           VER="${{ steps.resolve.outputs.version }}"
           if curl -sf "https://jsr.io/@qarks/vscode-language-servers/meta.json" | grep -q "\"$VER\""; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "JSR version $VER already published; skipping."
+            echo "Version $VER is already on JSR; skipping."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
