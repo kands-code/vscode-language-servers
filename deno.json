@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "prepare": "deno run --allow-all scripts/prepare-jsr.ts",
+    "check": "deno check scripts/jsr-version-exists.ts scripts/prepare-jsr.ts scripts/resolve-version.ts scripts/smoke-test.ts",
+    "check:jsr": "cd jsr && deno check css/node/cssServerMain.ts html/node/htmlServerMain.ts json/node/jsonServerMain.ts",
+    "smoke": "deno run --allow-all scripts/smoke-test.ts",
+    "publish:dry-run": "cd jsr && deno publish --dry-run --allow-dirty",
+    "fmt": "deno fmt",
+    "fmt:check": "deno fmt --check",
+    "lint": "deno lint"
+  },
+  "fmt": {
+    "exclude": ["jsr/", "work/"]
+  },
+  "lint": {
+    "exclude": ["jsr/", "work/"]
+  }
+}

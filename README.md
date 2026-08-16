@@ -59,10 +59,11 @@ language-servers = ["css-ls"]
 day and on manual trigger. It finds the latest VS Code release, skips versions
 already on JSR, and otherwise:
 
-1. runs `scripts/prepare-jsr.ts`, which clones that release of microsoft/vscode
-   (shallow, sparse), copies the three servers into `jsr/`, rewrites their
-   imports for Deno, patches one type-only CSS conflict, and writes `deno.json`
-   + README,
+1. runs `scripts/prepare-jsr.ts`, which checks out that release of
+   microsoft/vscode (reusing a local shallow sparse clone and fetching only the
+   requested tag when switching), copies the three servers into `jsr/`, rewrites
+   their imports for Deno, patches one type-only CSS conflict, and writes
+   `deno.json` - README,
 2. type-checks the generated package with `deno check`,
 3. runs `scripts/smoke-test.ts`, which starts each server and completes an LSP
    initialize/shutdown handshake over stdio,
@@ -82,6 +83,9 @@ cd ..
 
 deno run --allow-all scripts/smoke-test.ts
 ```
+
+The same commands are available as `deno task` aliases (`deno task` lists them):
+`deno task prepare 1.133.0`, `deno task check:jsr`, and `deno task smoke`.
 
 Needs `git` and `deno`.
 

@@ -365,24 +365,19 @@ async function prepareServer(
   if (name === "css") patchCssServer(dest);
 }
 
-/** Clone microsoft/vscode at the release tag, reusing an existing clone. */
-function ensureVscodeClone(version: string, vscodeDir: string) {
-  try {
-    Deno.statSync(join(vscodeDir, ".git"));
-    const r = new Deno.Command("git", {
-      args: ["-C", vscodeDir, "describe", "--tags", "--exact-match"],
-      stdout: "piped",
-      stderr: "piped",
-    }).outputSync();
-    if (r.success && new TextDecoder().decode(r.stdout).trim() === version) {
-      console.log(`Reusing existing microsoft/vscode clone @ ${version}`);
-      return;
-    }
-    Deno.removeSync(vscodeDir, { recursive: true });
-  } catch {
-    /* not cloned yet */
-  }
+const VSCODE_REPO_URL = "https://github.com/microsoft/vscode.git";
 
+function gitDescribe(vscodeDir: string): string | null {
+  const r = new Deno.Command("git", {
+    args: ["-C", vscodeDir, "describe", "--tags", "--exact-match"],
+    stdout: "piped",
+    stderr: "piped",
+  }).outputSync();
+  if (!r.success) return null;
+  return new TextDecoder().decode(r.stdout).trim();
+}
+
+function cloneVscode(version: string, vscodeDir: string) {
   const args = [
     "clone",
     "--depth",
@@ -391,13 +386,13 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
     version,
     "--filter=blob:none",
     "--sparse",
-    "https://github.com/microsoft/vscode.git",
+    VSCODE_REPO_URL,
     vscodeDir,
   ];
   let lastStatus: number | null = null;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     console.log(
-      `Cloning microsoft/vscode @ ${version} (attempt ${attempt}/3, shallow + sparse)…`,
+      `Cloning microsoft/vscode @ ${version} (attempt ${attempt}/3, shallow + sparse) ...`,
     );
     const r = new Deno.Command("git", {
       args,
@@ -407,11 +402,72 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
     if (r.success) return;
     lastStatus = r.code;
     Deno.removeSync(vscodeDir, { recursive: true });
-    console.warn(`  clone failed (exit ${r.code}); retrying…`);
+    console.warn(`  clone failed (exit ${r.code}); retrying ...`);
   }
   throw new Error(
     `git clone failed after 3 attempts (last exit ${lastStatus})`,
   );
+}
+
+/**
+ * Ensure a shallow sparse clone of microsoft/vscode is checked out at `version`.
+ * An existing clone at another tag is reused by fetching just that tag instead
+ * of re-cloning the repository from scratch.
+ */
+function ensureVscodeClone(version: string, vscodeDir: string) {
+  let existing = false;
+  try {
+    Deno.statSync(join(vscodeDir, ".git"));
+    existing = true;
+  } catch {
+    /* not cloned yet */
+  }
+
+  if (existing) {
+    const current = gitDescribe(vscodeDir);
+    if (current === version) {
+      console.log(`Reusing existing microsoft/vscode clone @ ${version}`);
+      return;
+    }
+
+    console.log(
+      `Existing microsoft/vscode clone is @ ${
+        current ?? "unknown"
+      }; fetching ${version} ...`,
+    );
+    const fetch = new Deno.Command("git", {
+      args: [
+        "-C",
+        vscodeDir,
+        "fetch",
+        "--depth",
+        "1",
+        "origin",
+        "tag",
+        version,
+      ],
+      stdout: "inherit",
+      stderr: "inherit",
+    }).outputSync();
+    if (fetch.success) {
+      const checkout = new Deno.Command("git", {
+        args: ["-C", vscodeDir, "checkout", "--detach", "--force", version],
+        stdout: "inherit",
+        stderr: "inherit",
+      }).outputSync();
+      if (checkout.success) {
+        console.log(`Switched existing clone to ${version}`);
+        return;
+      }
+      console.warn(`  checkout failed (exit ${checkout.code}); re-cloning ...`);
+    } else {
+      console.warn(`  fetch failed (exit ${fetch.code}); re-cloning ...`);
+    }
+
+    Deno.removeSync(vscodeDir, { recursive: true });
+  }
+
+  cloneVscode(version, vscodeDir);
 }
 
 async function main() {

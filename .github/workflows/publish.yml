@@ -27,12 +27,19 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
+
+      - name: Check tooling
+        run: |
+          deno fmt --check
+          deno lint
+          deno task check
 
       - name: Resolve versions
         id: resolve
@@ -61,17 +68,15 @@ jobs:
 
       - name: Prepare JSR package
         if: steps.check.outputs.skip == 'false'
-        run: deno run --allow-all scripts/prepare-jsr.ts "${{ steps.resolve.outputs.clone }}" "${{ steps.resolve.outputs.version }}"
+        run: deno task prepare "${{ steps.resolve.outputs.clone }}" "${{ steps.resolve.outputs.version }}"
 
       - name: Type-check generated package
         if: steps.check.outputs.skip == 'false'
-        run: |
-          cd jsr
-          deno check css/node/cssServerMain.ts html/node/htmlServerMain.ts json/node/jsonServerMain.ts
+        run: deno task check:jsr
 
       - name: Smoke test language servers
         if: steps.check.outputs.skip == 'false'
-        run: deno run --allow-all scripts/smoke-test.ts
+        run: deno task smoke
 
       - name: Publish to JSR
         if: steps.check.outputs.skip == 'false'

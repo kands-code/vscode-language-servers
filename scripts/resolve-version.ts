@@ -8,7 +8,11 @@
 
 const explicit = Deno.args[0];
 
-if (explicit && /^\d+\.\d+\.\d+$/.test(explicit)) {
+if (explicit) {
+  if (!/^\d+\.\d+\.\d+$/.test(explicit)) {
+    console.error(`Invalid VS Code git tag (expected x.y.z): ${explicit}`);
+    Deno.exit(1);
+  }
   console.log(explicit);
   Deno.exit(0);
 }
