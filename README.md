@@ -55,8 +55,8 @@ language-servers = ["css-ls"]
 
 ## How it works
 
-[`.github/workflows/publish.yml`](.github/workflows/publish.yml) runs twice a
-day and on manual trigger. It finds the latest VS Code release, skips versions
+[`.github/workflows/publish.yml`](.github/workflows/publish.yml) runs once a
+week and on manual trigger. It finds the latest VS Code release, skips versions
 already on JSR, and otherwise:
 
 1. runs `scripts/prepare-jsr.ts`, which checks out that release of
@@ -96,11 +96,6 @@ Needs `git` and `deno`.
   is the Go-based native compiler and is not a drop-in for the JS `ts.*`
   LanguageService API the server uses. Embedded JS/TS completion is best-effort;
   HTML features are unaffected.
-- The CSS server is type-checked with a single compatibility cast:
-  `vscode-css-languageservice` pins `vscode-languageserver-types@3.17.5` exactly
-  while `vscode-languageserver@next` pulls `3.17.6-next.7`, so the LSP
-  `CodeActionContext` types differ. The generated code is patched at the one
-  boundary where that matters, which lets publishing use `--check`.
 - `--socket` / `--pipe` / `--node-ipc` are not usable: the pinned `-next`
   packages implement the socket/pipe transports backwards, and Deno has no IPC
   channel.

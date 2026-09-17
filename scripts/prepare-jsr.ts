@@ -293,26 +293,6 @@ function patchEntrypoint(dest: string, name: string) {
   Deno.writeTextFileSync(file, src);
 }
 
-/**
- * vscode-css-languageservice pins vscode-languageserver-types@3.17.5 exactly
- * while vscode-languageserver@next pulls 3.17.6-next.7. Their Diagnostic types
- * differ (message: string vs string | MarkupContent), which makes `deno check`
- * fail at the doCodeActions2 call even though the runtime values are
- * compatible. Cast the single boundary argument so publishing can use --check.
- */
-function patchCssServer(dest: string) {
-  const file = join(dest, "cssServer.ts");
-  const src = Deno.readTextFileSync(file);
-  const oldCall =
-    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context, stylesheet);";
-  const newCall =
-    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context as any, stylesheet);";
-  if (!src.includes(oldCall)) {
-    throw new Error(`Could not find doCodeActions2 call to patch in ${file}`);
-  }
-  Deno.writeTextFileSync(file, src.replace(oldCall, newCall));
-}
-
 /** README.md shipped in the JSR package, from the template file. */
 function generateReadme(version: string, vscodeVersion: string): string {
   return Deno.readTextFileSync(join(ROOT, "scripts", "jsr-readme.template.md"))
@@ -362,7 +342,6 @@ async function prepareServer(
   });
 
   patchEntrypoint(dest, name);
-  if (name === "css") patchCssServer(dest);
 }
 
 const VSCODE_REPO_URL = "https://github.com/microsoft/vscode.git";

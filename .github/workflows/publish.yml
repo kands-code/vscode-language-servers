@@ -13,8 +13,8 @@ name: publish
         required: false
         type: string
   schedule:
-    # Check for a new stable release twice a day (02:23 and 14:23 UTC).
-    - cron: "23 2,14 * * *"
+    # Check for a new stable release once a week (Mondays 02:23 UTC).
+    - cron: "23 2 * * 1"
 
 permissions:
   contents: read
