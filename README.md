@@ -1,9 +1,9 @@
 # vscode-language-servers
 
 CSS, HTML, and JSON language servers extracted from
-[microsoft/vscode](https://github.com/microsoft/vscode), published to
+[microsoft/vscode](https://github.com/microsoft/vscode) and published to
 [JSR](https://jsr.io/@qarks/vscode-language-servers). A GitHub Actions workflow
-keeps them up to date automatically.
+publishes new VS Code releases automatically.
 
 | Binary                        | Languages         | Source in microsoft/vscode                 |
 | ----------------------------- | ----------------- | ------------------------------------------ |
@@ -11,9 +11,8 @@ keeps them up to date automatically.
 | `vscode-html-language-server` | HTML              | `extensions/html-language-features/server` |
 | `vscode-json-language-server` | JSON / JSONC      | `extensions/json-language-features/server` |
 
-Not included: markdown (published separately as
-[`vscode-markdown-languageserver`](https://www.npmjs.com/package/vscode-markdown-languageserver))
-and eslint (left the VS Code repo long ago).
+Markdown is published separately as
+[vscode-markdown-languageserver](https://www.npmjs.com/package/vscode-markdown-languageserver).
 
 ## Install
 
@@ -25,12 +24,13 @@ deno install --global -A -n vscode-html-language-server jsr:@qarks/vscode-langua
 deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-language-servers/json
 ```
 
-`-n` is required: without it, `deno install` names the binary after the package.
-Deno holds back releases younger than 24 hours; add `--minimum-dependency-age=0`
-to install right away.
+- `-n` sets the binary name; without it, `deno install` names the binary after
+  the package.
+- Deno withholds releases younger than 24 hours; pass
+  `--minimum-dependency-age=0` to install right away.
 
 Each binary is an LSP server on stdio — no flags needed. `--stdio` and
-`--clientProcessId=<pid>` (exit when the parent dies) also work.
+`--clientProcessId=<pid>` (exit when the parent process dies) also work.
 
 ## Editor setup
 
@@ -38,7 +38,7 @@ Neovim with [lspconfig](https://github.com/neovim/nvim-lspconfig):
 
 ```lua
 require('lspconfig').cssls.setup {
-  cmd = { '/path/to/vscode-css-language-server' },
+  cmd = { 'vscode-css-language-server' },
 }
 ```
 
@@ -55,50 +55,48 @@ language-servers = ["css-ls"]
 
 ## How it works
 
-[`.github/workflows/publish.yml`](.github/workflows/publish.yml) runs once a
-week and on manual trigger. It finds the latest VS Code release, skips versions
+[.github/workflows/publish.yml](.github/workflows/publish.yml) runs weekly and
+on manual trigger. It resolves the latest VS Code release, skips versions
 already on JSR, and otherwise:
 
-1. runs `scripts/prepare-jsr.ts`, which checks out that release of
-   microsoft/vscode (reusing a local shallow sparse clone and fetching only the
-   requested tag when switching), copies the three servers into `jsr/`, rewrites
-   their imports for Deno, patches one type-only CSS conflict, and writes
-   `deno.json` - README,
-2. type-checks the generated package with `deno check`,
-3. runs `scripts/smoke-test.ts`, which starts each server and completes an LSP
-   initialize/shutdown handshake over stdio,
+1. runs `scripts/prepare-jsr.ts`, which checks out that VS Code release (reusing
+   a local shallow sparse clone), copies the three servers into `jsr/`, rewrites
+   their imports for Deno, and writes `deno.json` and `README.md`;
+2. type-checks the generated package with `deno check`;
+3. runs `scripts/smoke-test.ts`, which performs an LSP initialize/shutdown
+   handshake with each server over stdio;
 4. publishes to JSR with `deno publish --check`.
 
-Needs one secret: `DENO_AUTH_TOKEN` (a JSR publish token).
+Versions below 1.133.0 are refused. For 1.133.0–1.137.x, one type-only CSS
+conflict is patched (see Notes).
+
+Publishing needs one secret: `DENO_AUTH_TOKEN` (a JSR publish token).
 
 ## Build locally
 
+Requires `git` and `deno`.
+
 ```sh
-deno run --allow-all scripts/prepare-jsr.ts 1.133.0   # writes jsr/
-
-# type-check and smoke-test the generated package
-cd jsr
-deno check css/node/cssServerMain.ts html/node/htmlServerMain.ts json/node/jsonServerMain.ts
-cd ..
-
-deno run --allow-all scripts/smoke-test.ts
+deno task prepare 1.133.0   # writes jsr/
+deno task check:jsr         # type-check the generated package
+deno task smoke             # LSP handshake smoke test
 ```
-
-The same commands are available as `deno task` aliases (`deno task` lists them):
-`deno task prepare 1.133.0`, `deno task check:jsr`, and `deno task smoke`.
-
-Needs `git` and `deno`.
 
 ## Notes
 
-- The HTML server imports `typescript` for embedded `<script>` completion. It is
-  pinned to the last JavaScript-based TypeScript (`6.0.x`): npm's `typescript@7`
-  is the Go-based native compiler and is not a drop-in for the JS `ts.*`
-  LanguageService API the server uses. Embedded JS/TS completion is best-effort;
-  HTML features are unaffected.
-- `--socket` / `--pipe` / `--node-ipc` are not usable: the pinned `-next`
-  packages implement the socket/pipe transports backwards, and Deno has no IPC
-  channel.
+- **Embedded JS/TS completion (HTML server):** the server imports `typescript`,
+  pinned to the last JavaScript-based release (`6.0.x`), because npm's Go-based
+  `typescript@7` does not implement the `ts.*` LanguageService API it relies on.
+  This completion is best-effort; HTML features are unaffected.
+- **CSS type patch (< 1.138.0):** `vscode-css-languageservice` pins
+  `vscode-languageserver-types@3.17.5` while `vscode-languageserver@next` pulls
+  `3.17.6-next.7`, so their LSP `CodeActionContext` types differ. The generated
+  code gets a single `as any` cast at the `doCodeActions2` call so `deno check`
+  passes. Upstream fixed this in 1.138.0; later versions are extracted
+  unpatched.
+- **No socket/pipe transports:** the pinned `-next` packages implement
+  `--socket` / `--pipe` / `--node-ipc` differently from Deno's runtime, so only
+  stdio is usable.
 
 ## License
 

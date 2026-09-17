@@ -5,11 +5,16 @@
  * Usage: deno run --allow-all scripts/prepare-jsr.ts <vscode-tag> [jsr-version]
  */
 
+import { compare, parse } from "@std/semver";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const JSR_NAME = "@qarks/vscode-language-servers";
+// Lowest VS Code tag this project verifies and maintains.
+const MIN_SUPPORTED_TAG = parse("1.133.0");
+// The css CodeActionContext type conflict is fixed upstream from this tag on.
+const FIXED_CSS_TYPES_TAG = parse("1.138.0");
 // Pinned to the last JavaScript-based TypeScript. npm's `typescript@7` is the
 // Go-based native compiler and is not a drop-in for the JS `ts.*` LanguageService
 // API that html/modes/javascriptMode.ts relies on for embedded <script> completion.
@@ -293,6 +298,29 @@ function patchEntrypoint(dest: string, name: string) {
   Deno.writeTextFileSync(file, src);
 }
 
+/**
+ * vscode-css-languageservice pins vscode-languageserver-types@3.17.5 exactly
+ * while vscode-languageserver@next pulls 3.17.6-next.7. Their Diagnostic types
+ * differ (message: string vs string | MarkupContent), which makes `deno check`
+ * fail at the doCodeActions2 call even though the runtime values are
+ * compatible. Cast the single boundary argument so publishing can use --check.
+ *
+ * Upstream fixed this in VS Code 1.138.0, so the patch is only applied for
+ * 1.133.0 <= version < 1.138.0.
+ */
+function patchCssServer(dest: string) {
+  const file = join(dest, "cssServer.ts");
+  const src = Deno.readTextFileSync(file);
+  const oldCall =
+    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context, stylesheet);";
+  const newCall =
+    "return getLanguageService(document).doCodeActions2(document, codeActionParams.range, codeActionParams.context as any, stylesheet);";
+  if (!src.includes(oldCall)) {
+    throw new Error(`Could not find doCodeActions2 call to patch in ${file}`);
+  }
+  Deno.writeTextFileSync(file, src.replace(oldCall, newCall));
+}
+
 /** README.md shipped in the JSR package, from the template file. */
 function generateReadme(version: string, vscodeVersion: string): string {
   return Deno.readTextFileSync(join(ROOT, "scripts", "jsr-readme.template.md"))
@@ -304,6 +332,7 @@ async function prepareServer(
   server: { name: string; serverDir: string },
   vscodeDir: string,
   jsrDir: string,
+  vscodeTag: string,
 ) {
   const { name, serverDir } = server;
   console.log(`==> Preparing JSR package for ${name}`);
@@ -342,6 +371,12 @@ async function prepareServer(
   });
 
   patchEntrypoint(dest, name);
+
+  // The css CodeActionContext type conflict is patched only for versions
+  // where upstream still has it: 1.133.0 <= cloneTag < 1.138.0.
+  if (name === "css" && compare(parse(vscodeTag), FIXED_CSS_TYPES_TAG) < 0) {
+    patchCssServer(dest);
+  }
 }
 
 const VSCODE_REPO_URL = "https://github.com/microsoft/vscode.git";
@@ -464,6 +499,13 @@ async function main() {
     console.error(`Invalid publish version: ${publishVersion}`);
     Deno.exit(1);
   }
+  // Only verify and maintain language servers from VS Code 1.133.0 onwards.
+  if (compare(parse(cloneTag), MIN_SUPPORTED_TAG) < 0) {
+    console.error(
+      `VS Code ${cloneTag} is below the minimum supported version 1.133.0: refusing to build.`,
+    );
+    Deno.exit(1);
+  }
 
   const vscodeDir = join(ROOT, "work", "vscode");
   const jsrDir = join(ROOT, "jsr");
@@ -491,7 +533,7 @@ async function main() {
   await Deno.mkdir(jsrDir, { recursive: true });
 
   for (const server of SERVERS) {
-    await prepareServer(server, vscodeDir, jsrDir);
+    await prepareServer(server, vscodeDir, jsrDir, cloneTag);
   }
 
   // Ship VS Code's MIT license notice with the extracted code.

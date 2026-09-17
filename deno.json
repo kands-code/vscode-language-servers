@@ -1,4 +1,7 @@
 {
+  "imports": {
+    "@std/semver": "jsr:@std/semver@^1.0.8"
+  },
   "tasks": {
     "prepare": "deno run --allow-all scripts/prepare-jsr.ts",
     "check": "deno check scripts/jsr-version-exists.ts scripts/prepare-jsr.ts scripts/resolve-version.ts scripts/smoke-test.ts",
@@ -10,9 +13,9 @@
     "lint": "deno lint"
   },
   "fmt": {
-    "exclude": ["jsr/", "work/"]
+    "exclude": [".deno-tmp/", "jsr/", "work/"]
   },
   "lint": {
-    "exclude": ["jsr/", "work/"]
+    "exclude": [".deno-tmp/", "jsr/", "work/"]
   }
 }

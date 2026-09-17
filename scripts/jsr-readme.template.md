@@ -1,8 +1,8 @@
 # @qarks/vscode-language-servers
 
 CSS, HTML, and JSON language servers extracted from
-[microsoft/vscode](https://github.com/microsoft/vscode), published to JSR for
-Deno. Version `{{version}}` tracks VS Code `{{vscodeVersion}}`.
+[microsoft/vscode](https://github.com/microsoft/vscode) and packaged for Deno.
+Version `{{version}}` tracks VS Code `{{vscodeVersion}}`.
 
 ## Install
 
@@ -15,13 +15,14 @@ deno install --global -A -n vscode-json-language-server jsr:@qarks/vscode-langua
 ## Usage
 
 Each binary is an LSP server on stdio — no flags needed. `--stdio` and
-`--clientProcessId=<pid>` (exit when the parent dies) also work.
+`--clientProcessId=<pid>` (exit when the parent process dies) also work.
+`--socket` / `--pipe` / `--node-ipc` are not supported.
 
 ### Neovim (lspconfig)
 
 ```lua
 require('lspconfig').cssls.setup {
-  cmd = { '/path/to/vscode-css-language-server' },
+  cmd = { 'vscode-css-language-server' },
 }
 ```
 
@@ -35,6 +36,13 @@ command = "vscode-css-language-server"
 name = "css"
 language-servers = ["css-ls"]
 ```
+
+## Notes
+
+- Embedded `<script>` completion in the HTML server relies on the
+  JavaScript-based `typescript@6.0.x`; it is best-effort.
+- Source and build tooling:
+  [kands-code/vscode-language-servers](https://github.com/kands-code/vscode-language-servers).
 
 ## License
 

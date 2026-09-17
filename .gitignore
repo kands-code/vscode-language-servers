@@ -3,6 +3,8 @@
 jsr/
 # vscode clone and local caches
 work/
+# local DENO_DIR used by this project's tooling
+.deno-tmp/
 
 # local
 node_modules/
