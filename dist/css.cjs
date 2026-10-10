@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 //#region \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;

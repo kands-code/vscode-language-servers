@@ -7,7 +7,8 @@
 
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { dirname, resolve } from "node:path";
+import { readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { Readable, Writable } from "node:stream";
 import { fileURLToPath } from "node:url";
 
@@ -21,6 +22,30 @@ const SERVERS = [
 ];
 
 const TIMEOUT_MS = 30_000;
+
+/**
+ * The VS Code tag the bundles were extracted from, as recorded by
+ * scripts/extract.ts. Warns when it does not match the package version, so a
+ * release does not silently ship bundles from stale sources.
+ */
+function sourceTag(): string {
+  let tag = "unknown";
+  try {
+    tag = readFileSync(join(ROOT, "servers", ".vscode-tag"), "utf8").trim();
+  } catch {
+    return "unknown (servers/.vscode-tag missing; run npm run extract)";
+  }
+  const version = JSON.parse(
+    readFileSync(join(ROOT, "package.json"), "utf8"),
+  ).version as string;
+  // Hotfix releases use a suffix (1.140.0-hotfix.1) on the same VS Code tag.
+  if (version !== tag && version.split("-")[0] !== tag) {
+    console.warn(
+      `  [warn] bundles were extracted from VS Code ${tag}, but package.json is ${version}`,
+    );
+  }
+  return tag;
+}
 
 const CRLF_CRLF = new TextEncoder().encode("\r\n\r\n");
 
@@ -206,7 +231,8 @@ async function smokeTest(server: { name: string; entry: string }) {
 }
 
 async function main() {
-  console.log(`Smoke-testing servers in ${ROOT}\n`);
+  console.log(`Smoke-testing servers in ${ROOT}`);
+  console.log(`Bundles extracted from VS Code ${sourceTag()}\n`);
   for (const server of SERVERS) {
     await smokeTest(server);
     console.log("");

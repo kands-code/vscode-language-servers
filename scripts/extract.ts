@@ -404,6 +404,10 @@ async function main() {
     console.warn("  [warn] VS Code LICENSE.txt not found; skipping license copy");
   }
 
+  // Record the source tag so build/smoke output says which VS Code release
+  // the bundles were extracted from.
+  writeFileSync(join(serversDir, ".vscode-tag"), tag + "\n");
+
   console.log("\n=== Sources ready ===");
   console.log(`  ${serversDir}`);
   console.log(`Next: npm run check && npm run build && npm run smoke`);

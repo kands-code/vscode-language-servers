@@ -14,14 +14,17 @@ smoke-tests them over LSP stdio, commits the bundles, and tags the release.
 
 ## Install
 
-Requires Node.js ≥ 22 and `git`.
+Requires Node.js ≥ 22.
 
 ```sh
-npm install --global github:kands-code/vscode-language-servers#1.140.0
+npm install --global https://github.com/kands-code/vscode-language-servers/archive/refs/tags/1.141.0.tar.gz
 ```
 
-This installs all three binaries. To install another version, change the tag;
-to follow the latest release, drop the `#1.140.0` suffix.
+This installs all three binaries. To install another version, change the tag.
+
+> Install from a release tarball rather than a `github:` git spec: recent npm
+> versions can leave global git dependencies as broken symlinks into the npm
+> cache. Tarball installs are fetched and placed like registry packages.
 
 Each binary is an LSP server over stdio. Like the upstream VS Code servers,
 a transport flag is required: `--stdio`, or `--socket` / `--pipe` /
@@ -68,8 +71,9 @@ already tagged in this repo, and otherwise:
    handshake with each server over stdio;
 5. commits `dist/` and `lib/` to the default branch and tags the release.
 
-Publishing needs no registry and no secrets: installation goes through npm's
-git support, and the release artifacts live in the repository itself.
+Publishing needs no registry and no secrets: installation goes through
+npm's support for tarball URLs, and the release artifacts live in the
+repository itself.
 
 Versions below 1.138.0 are refused.
 

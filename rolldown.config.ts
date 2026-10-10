@@ -14,6 +14,9 @@ const server = (name: string) => ({
   output: {
     file: `dist/${name}.cjs`,
     format: "cjs" as const,
+    // npm links `bin` entries directly on POSIX, so the bundle must be
+    // directly executable.
+    banner: "#!/usr/bin/env node",
     // Inline the few lazy dynamic imports (e.g. javascriptLibs) so each
     // server stays a single file usable as a bin entry.
     codeSplitting: false,
