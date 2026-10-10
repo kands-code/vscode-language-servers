@@ -12,17 +12,13 @@ import { spawnSync } from "node:child_process";
 
 const version = process.argv[2];
 if (!version) {
-  console.error(
-    "Usage: node --experimental-strip-types scripts/version-exists.ts <version>",
-  );
+  console.error("Usage: node --experimental-strip-types scripts/version-exists.ts <version>");
   process.exit(1);
 }
 
-const r = spawnSync(
-  "git",
-  ["ls-remote", "--tags", "origin", `refs/tags/${version}`],
-  { encoding: "utf8" },
-);
+const r = spawnSync("git", ["ls-remote", "--tags", "origin", `refs/tags/${version}`], {
+  encoding: "utf8",
+});
 if (r.status !== 0) {
   console.error(`git ls-remote failed: ${r.stderr.trim()}`);
   process.exit(1);

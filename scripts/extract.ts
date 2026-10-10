@@ -4,11 +4,11 @@
  *
  * Usage: node --experimental-strip-types scripts/extract.ts <vscode-tag>
  *
- * Unlike the old Deno pipeline this does no import rewriting: the upstream
- * sources use `.js` ESM specifiers which both Rolldown and tsc
- * (moduleResolution: bundler) resolve to their `.ts` counterparts. Each
- * server gets its own package.json with exact dependency versions from the
- * VS Code package-lock, so per-server version pins are preserved.
+ * The upstream sources use `.js` ESM specifiers, which both Rolldown and tsc
+ * (moduleResolution: bundler) resolve to their `.ts` counterparts, so no
+ * import rewriting is needed. Each server gets its own package.json with
+ * exact dependency versions from the VS Code package-lock, so per-server
+ * version pins are preserved.
  */
 
 import {
@@ -30,9 +30,7 @@ const MIN_SUPPORTED_TAG = "1.138.0";
 // Pinned to the last JavaScript-based TypeScript. npm's `typescript@7` is the
 // Go-based native compiler and is not a drop-in for the JS `ts.*`
 // LanguageService API that html/modes/javascriptMode.ts relies on for
-// embedded <script> completion. It is a runtime dependency of the published
-// package (see package.json), not bundled.
-const TS_VERSION = "6.0.3";
+// embedded <script> completion.
 
 const SERVERS = [
   { name: "css", serverDir: "extensions/css-language-features/server" },
@@ -54,9 +52,10 @@ const TYPE_ONLY = new Set([
   "DocumentUri",
 ]);
 
-function splitTypeValue(
-  namesStr: string,
-): { typeOnly: string[]; value: string[] } {
+function splitTypeValue(namesStr: string): {
+  typeOnly: string[];
+  value: string[];
+} {
   const typeOnly: string[] = [];
   const value: string[] = [];
   for (const raw of namesStr.split(",")) {
@@ -123,13 +122,8 @@ function walkTs(dir: string, fn: (file: string) => void) {
  * exact (no-range) dependencies so installs are deterministic.
  */
 function buildDependencies(serverRoot: string): Record<string, string> {
-  const lock = JSON.parse(
-    readFileSync(join(serverRoot, "package-lock.json"), "utf8"),
-  );
-  const packages = (lock.packages ?? {}) as Record<
-    string,
-    { version?: string }
-  >;
+  const lock = JSON.parse(readFileSync(join(serverRoot, "package-lock.json"), "utf8"));
+  const packages = (lock.packages ?? {}) as Record<string, { version?: string }>;
   const deps: Record<string, string> = {};
   for (const [key, meta] of Object.entries(packages)) {
     if (!key.startsWith("node_modules/")) {
@@ -200,11 +194,9 @@ export function loadLibrary(name: string) {
 
 function npmInstall(dir: string) {
   console.log(`Installing dependencies in ${dir} ...`);
-  const r = spawnSync(
-    "npm",
-    ["install", "--prefix", dir, "--no-audit", "--no-fund"],
-    { stdio: "inherit" },
-  );
+  const r = spawnSync("npm", ["install", "--prefix", dir, "--no-audit", "--no-fund"], {
+    stdio: "inherit",
+  });
   if (r.status !== 0) {
     throw new Error(`npm install failed in ${dir} (exit ${r.status})`);
   }
@@ -234,42 +226,31 @@ async function prepareServer(
         copyFileSync(join(libSrc, entry.name), join(libDest, entry.name));
       }
     }
-    writeFileSync(
-      join(dest, "modes", "javascriptLibs.ts"),
-      javascriptLibsSource(),
-    );
+    writeFileSync(join(dest, "modes", "javascriptLibs.ts"), javascriptLibsSource());
   }
 
-  // Re-export statements must not re-export type-only names as values.
   walkTs(dest, (file) => {
     const src = readFileSync(file, "utf8");
     const out = splitTypeOnlyReexports(src);
     if (out !== src) writeFileSync(file, out);
   });
 
-  // Exact deps from the server's own lockfile; npm installs them into
-  // servers/<name>/node_modules so each server keeps its own version pins.
   const pkg = {
     name: `vscode-language-servers-${name}-src`,
     version: "0.0.0",
     private: true,
     dependencies: buildDependencies(serverRoot),
   };
-  writeFileSync(
-    join(dest, "package.json"),
-    JSON.stringify(pkg, null, 2) + "\n",
-  );
+  writeFileSync(join(dest, "package.json"), JSON.stringify(pkg, null, 2) + "\n");
   npmInstall(dest);
 }
 
 const VSCODE_REPO_URL = "https://github.com/microsoft/vscode.git";
 
 function gitDescribe(vscodeDir: string): string | null {
-  const r = spawnSync(
-    "git",
-    ["-C", vscodeDir, "describe", "--tags", "--exact-match"],
-    { encoding: "utf8" },
-  );
+  const r = spawnSync("git", ["-C", vscodeDir, "describe", "--tags", "--exact-match"], {
+    encoding: "utf8",
+  });
   if (r.status !== 0) return null;
   return r.stdout.trim();
 }
@@ -297,9 +278,7 @@ function cloneVscode(version: string, vscodeDir: string) {
     rmSync(vscodeDir, { recursive: true, force: true });
     console.warn(`  clone failed (exit ${r.status}); retrying ...`);
   }
-  throw new Error(
-    `git clone failed after 3 attempts (last exit ${lastStatus})`,
-  );
+  throw new Error(`git clone failed after 3 attempts (last exit ${lastStatus})`);
 }
 
 /**
@@ -318,9 +297,7 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
     }
 
     console.log(
-      `Existing microsoft/vscode clone is @ ${
-        current ?? "unknown"
-      }; fetching ${version} ...`,
+      `Existing microsoft/vscode clone is @ ${current ?? "unknown"}; fetching ${version} ...`,
     );
     const fetch = spawnSync(
       "git",
@@ -337,9 +314,7 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
         console.log(`Switched existing clone to ${version}`);
         return;
       }
-      console.warn(
-        `  checkout failed (exit ${checkout.status}); re-cloning ...`,
-      );
+      console.warn(`  checkout failed (exit ${checkout.status}); re-cloning ...`);
     } else {
       console.warn(`  fetch failed (exit ${fetch.status}); re-cloning ...`);
     }
@@ -353,9 +328,7 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
 async function main() {
   const tag = process.argv[2];
   if (!tag || !/^\d+\.\d+\.\d+$/.test(tag)) {
-    console.error(
-      "Usage: node --experimental-strip-types scripts/extract.ts <vscode-tag>",
-    );
+    console.error("Usage: node --experimental-strip-types scripts/extract.ts <vscode-tag>");
     process.exit(1);
   }
   if (compareVersions(tag, MIN_SUPPORTED_TAG) < 0) {
@@ -374,13 +347,7 @@ async function main() {
   // the server folders need listing here.
   const sparse = spawnSync(
     "git",
-    [
-      "-C",
-      vscodeDir,
-      "sparse-checkout",
-      "set",
-      ...SERVERS.map((s) => s.serverDir),
-    ],
+    ["-C", vscodeDir, "sparse-checkout", "set", ...SERVERS.map((s) => s.serverDir)],
     { stdio: "inherit" },
   );
   if (sparse.status !== 0) {
@@ -396,10 +363,7 @@ async function main() {
 
   // Ship VS Code's MIT license notice with the extracted code.
   try {
-    copyFileSync(
-      join(vscodeDir, "LICENSE.txt"),
-      join(ROOT, "LICENSE.vscode.txt"),
-    );
+    copyFileSync(join(vscodeDir, "LICENSE.txt"), join(ROOT, "LICENSE.vscode.txt"));
   } catch {
     console.warn("  [warn] VS Code LICENSE.txt not found; skipping license copy");
   }
@@ -410,7 +374,9 @@ async function main() {
 
   console.log("\n=== Sources ready ===");
   console.log(`  ${serversDir}`);
-  console.log(`Next: npm run check && npm run build && npm run smoke`);
+  console.log(
+    "Next: npm run format && npm run lint && npm run check && npm run build && npm run smoke",
+  );
 }
 
 await main();

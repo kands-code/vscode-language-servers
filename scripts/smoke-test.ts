@@ -35,9 +35,7 @@ function sourceTag(): string {
   } catch {
     return "unknown (servers/.vscode-tag missing; run npm run extract)";
   }
-  const version = JSON.parse(
-    readFileSync(join(ROOT, "package.json"), "utf8"),
-  ).version as string;
+  const version = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")).version as string;
   // Hotfix releases use a suffix (1.140.0-hotfix.1) on the same VS Code tag.
   if (version !== tag && version.split("-")[0] !== tag) {
     console.warn(
@@ -51,9 +49,7 @@ const CRLF_CRLF = new TextEncoder().encode("\r\n\r\n");
 
 function frame(message: unknown): Uint8Array {
   const body = new TextEncoder().encode(JSON.stringify(message));
-  const header = new TextEncoder().encode(
-    `Content-Length: ${body.length}\r\n\r\n`,
-  );
+  const header = new TextEncoder().encode(`Content-Length: ${body.length}\r\n\r\n`);
   const out = new Uint8Array(header.length + body.length);
   out.set(header, 0);
   out.set(body, header.length);
@@ -61,8 +57,7 @@ function frame(message: unknown): Uint8Array {
 }
 
 function findHeaderEnd(buffer: Uint8Array): number {
-  outer:
-  for (let i = 0; i <= buffer.length - CRLF_CRLF.length; i++) {
+  outer: for (let i = 0; i <= buffer.length - CRLF_CRLF.length; i++) {
     for (let j = 0; j < CRLF_CRLF.length; j++) {
       if (buffer[i + j] !== CRLF_CRLF[j]) continue outer;
     }
@@ -88,9 +83,7 @@ function parseMessage(
   const contentLength = parseContentLength(buffer.slice(0, headerEnd));
   const bodyStart = headerEnd + CRLF_CRLF.length;
   if (buffer.length < bodyStart + contentLength) return null;
-  const body = new TextDecoder().decode(
-    buffer.slice(bodyStart, bodyStart + contentLength),
-  );
+  const body = new TextDecoder().decode(buffer.slice(bodyStart, bodyStart + contentLength));
   return {
     message: JSON.parse(body),
     consumed: bodyStart + contentLength,
@@ -116,10 +109,7 @@ class MessageReader {
       const chunk = await Promise.race([
         this.reader.read(),
         new Promise<never>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("timed out waiting for LSP message")),
-            TIMEOUT_MS,
-          )
+          setTimeout(() => reject(new Error("timed out waiting for LSP message")), TIMEOUT_MS),
         ),
       ]);
       if (chunk.done) {
@@ -146,14 +136,10 @@ async function readResponse(
       continue;
     }
     if (message.id !== expectedId) {
-      throw new Error(
-        `expected response id ${expectedId}, got ${JSON.stringify(message.id)}`,
-      );
+      throw new Error(`expected response id ${expectedId}, got ${JSON.stringify(message.id)}`);
     }
     if (message.error !== undefined) {
-      throw new Error(
-        `request ${expectedId} failed: ${JSON.stringify(message.error)}`,
-      );
+      throw new Error(`request ${expectedId} failed: ${JSON.stringify(message.error)}`);
     }
     return message;
   }
@@ -192,18 +178,12 @@ async function smokeTest(server: { name: string; entry: string }) {
     const capabilityCount = Object.keys(result.capabilities).length;
     console.log(`  initialize OK (${capabilityCount} capabilities)`);
 
-    await writer.write(
-      frame({ jsonrpc: "2.0", method: "initialized", params: {} }),
-    );
+    await writer.write(frame({ jsonrpc: "2.0", method: "initialized", params: {} }));
 
-    await writer.write(
-      frame({ jsonrpc: "2.0", id: 2, method: "shutdown" }),
-    );
+    await writer.write(frame({ jsonrpc: "2.0", id: 2, method: "shutdown" }));
     const shutdown = await readResponse(messages, 2);
     if (shutdown.result !== null) {
-      throw new Error(
-        `expected shutdown result null, got ${JSON.stringify(shutdown.result)}`,
-      );
+      throw new Error(`expected shutdown result null, got ${JSON.stringify(shutdown.result)}`);
     }
     console.log("  shutdown OK");
 

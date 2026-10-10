@@ -18,17 +18,13 @@ if (explicit) {
 }
 
 try {
-  const res = await fetch(
-    "https://update.code.visualstudio.com/api/releases/stable",
-  );
+  const res = await fetch("https://update.code.visualstudio.com/api/releases/stable");
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const releases = (await res.json()) as string[];
   const latest = releases[0];
   if (!latest) throw new Error("empty release list");
   console.log(latest);
 } catch (err) {
-  console.error(
-    `Failed to resolve VS Code version: ${(err as Error).message}`,
-  );
+  console.error(`Failed to resolve VS Code version: ${(err as Error).message}`);
   process.exit(1);
 }
