@@ -1,10 +1,7 @@
-# generated
-# JSR package built by scripts/prepare-jsr.ts
-jsr/
+# extracted sources and installed deps (built by scripts/extract.ts)
+servers/
 # vscode clone and local caches
 work/
-# local DENO_DIR used by this project's tooling
-.deno-tmp/
 
 # local
 node_modules/

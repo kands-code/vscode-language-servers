@@ -5,11 +5,11 @@ name: publish
   workflow_dispatch:
     inputs:
       version:
-        description: "JSR version to publish (e.g. 1.133.1 or 1.133.0-hotfix.1). Leave empty for the latest VS Code stable."
+        description: "Version to release (e.g. 1.140.0 or 1.140.0-hotfix.1). Leave empty for the latest VS Code stable."
         required: false
         type: string
       vscode_tag:
-        description: "VS Code git tag to extract from (e.g. 1.133.0). Leave empty for the latest stable. Set explicitly when publishing a hotfix of an older release."
+        description: "VS Code git tag to extract from (e.g. 1.140.0). Leave empty for the latest stable. Set explicitly when releasing a hotfix of an older version."
         required: false
         type: string
   schedule:
@@ -17,8 +17,7 @@ name: publish
     - cron: "23 2 * * 1"
 
 permissions:
-  contents: read
-  id-token: write
+  contents: write
 
 concurrency:
   group: publish
@@ -31,22 +30,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
 
-      - name: Check tooling
-        run: |
-          deno fmt --check
-          deno lint
-          deno task check
+      - name: Install tooling
+        run: npm ci
 
       - name: Resolve versions
         id: resolve
         run: |
           # Only query the update API when the VS Code tag is not pinned.
           if [ -z "${{ github.event.inputs.vscode_tag }}" ]; then
-            LATEST="$(deno run --allow-net scripts/resolve-version.ts)"
+            LATEST="$(node --experimental-strip-types scripts/resolve-version.ts)"
           else
             LATEST=""
           fi
@@ -56,32 +57,40 @@ jobs:
           [ -z "$VER" ] && VER="$CLONE"
           echo "clone=$CLONE" >> "$GITHUB_OUTPUT"
           echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "Resolved: vscode_tag=$CLONE jsr_version=$VER"
+          echo "Resolved: vscode_tag=$CLONE version=$VER"
 
-      - name: Skip if already published
+      - name: Skip if already released
         id: check
         run: |
           VER="${{ steps.resolve.outputs.version }}"
-          CHECK="$(deno run --allow-net scripts/jsr-version-exists.ts "$VER")"
+          CHECK="$(node --experimental-strip-types scripts/version-exists.ts "$VER")"
           echo "$CHECK" >> "$GITHUB_OUTPUT"
           echo "$CHECK"
 
-      - name: Prepare JSR package
+      - name: Extract VS Code sources
         if: steps.check.outputs.skip == 'false'
-        run: deno task prepare "${{ steps.resolve.outputs.clone }}" "${{ steps.resolve.outputs.version }}"
+        run: node --experimental-strip-types scripts/extract.ts "${{ steps.resolve.outputs.clone }}"
 
-      - name: Type-check generated package
+      - name: Type-check sources
         if: steps.check.outputs.skip == 'false'
-        run: deno task check:jsr
+        run: npm run check
+
+      - name: Bundle language servers
+        if: steps.check.outputs.skip == 'false'
+        run: npm run build
 
       - name: Smoke test language servers
         if: steps.check.outputs.skip == 'false'
-        run: deno task smoke
+        run: npm run smoke
 
-      - name: Publish to JSR
+      - name: Commit release and tag
         if: steps.check.outputs.skip == 'false'
-        env:
-          DENO_AUTH_TOKEN: ${{ secrets.DENO_AUTH_TOKEN }}
         run: |
-          cd jsr
-          deno publish --check --allow-dirty
+          VER="${{ steps.resolve.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm version "$VER" --no-git-tag-version
+          git add package.json package-lock.json dist lib LICENSE.vscode.txt
+          git commit -m "Release $VER (VS Code ${{ steps.resolve.outputs.clone }})"
+          git tag "$VER"
+          git push origin HEAD "$VER"

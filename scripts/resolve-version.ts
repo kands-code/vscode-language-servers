@@ -1,20 +1,20 @@
-#!/usr/bin/env -S deno run --allow-net
+#!/usr/bin/env -S node --experimental-strip-types
 /**
  * Prints the VS Code version to extract: the one passed in, or the latest
  * stable from the VS Code update API.
  *
- * Usage: deno run --allow-net scripts/resolve-version.ts [version]
+ * Usage: node --experimental-strip-types scripts/resolve-version.ts [version]
  */
 
-const explicit = Deno.args[0];
+const explicit = process.argv[2];
 
 if (explicit) {
   if (!/^\d+\.\d+\.\d+$/.test(explicit)) {
     console.error(`Invalid VS Code git tag (expected x.y.z): ${explicit}`);
-    Deno.exit(1);
+    process.exit(1);
   }
   console.log(explicit);
-  Deno.exit(0);
+  process.exit(0);
 }
 
 try {
@@ -27,6 +27,8 @@ try {
   if (!latest) throw new Error("empty release list");
   console.log(latest);
 } catch (err) {
-  console.error(`Failed to resolve VS Code version: ${(err as Error).message}`);
-  Deno.exit(1);
+  console.error(
+    `Failed to resolve VS Code version: ${(err as Error).message}`,
+  );
+  process.exit(1);
 }

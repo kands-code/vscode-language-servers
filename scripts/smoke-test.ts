@@ -1,17 +1,23 @@
-#!/usr/bin/env -S deno run --allow-all
+#!/usr/bin/env -S node --experimental-strip-types
 /**
- * Smoke-tests each generated language server entrypoint over LSP stdio.
+ * Smoke-tests each bundled language server over LSP stdio.
  *
- * Usage: deno run --allow-all scripts/smoke-test.ts [jsr-dir]
+ * Usage: node --experimental-strip-types scripts/smoke-test.ts [repo-root]
  */
 
-const SCRIPT_DIR = import.meta.dirname;
-const JSR_DIR = Deno.args[0] ?? `${SCRIPT_DIR}/../jsr`;
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { dirname, resolve } from "node:path";
+import { Readable, Writable } from "node:stream";
+import { fileURLToPath } from "node:url";
+
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(SCRIPT_DIR, "..");
 
 const SERVERS = [
-  { name: "css", entry: "css/node/cssServerMain.ts" },
-  { name: "html", entry: "html/node/htmlServerMain.ts" },
-  { name: "json", entry: "json/node/jsonServerMain.ts" },
+  { name: "css", entry: "dist/css.cjs" },
+  { name: "html", entry: "dist/html.cjs" },
+  { name: "json", entry: "dist/json.cjs" },
 ];
 
 const TIMEOUT_MS = 30_000;
@@ -68,10 +74,11 @@ function parseMessage(
 
 class MessageReader {
   #buffer = new Uint8Array(0);
+  readonly reader: ReadableStreamDefaultReader<Uint8Array>;
 
-  constructor(
-    private readonly reader: ReadableStreamDefaultReader<Uint8Array>,
-  ) {}
+  constructor(reader: ReadableStreamDefaultReader<Uint8Array>) {
+    this.reader = reader;
+  }
 
   async read(): Promise<Record<string, unknown>> {
     while (true) {
@@ -130,18 +137,13 @@ async function readResponse(
 async function smokeTest(server: { name: string; entry: string }) {
   console.log(`==> Smoke testing ${server.name} (${server.entry})`);
 
-  const command = new Deno.Command(Deno.execPath(), {
-    args: ["run", "--allow-all", server.entry],
-    cwd: JSR_DIR,
-    stdin: "piped",
-    stdout: "piped",
-    stderr: "inherit",
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+  const child = spawn(process.execPath, [server.entry, "--stdio"], {
+    cwd: ROOT,
+    stdio: ["pipe", "pipe", "inherit"],
   });
-
-  const child = command.spawn();
-  const writer = child.stdin.getWriter();
-  const messages = new MessageReader(child.stdout.getReader());
+  const writer = Writable.toWeb(child.stdin!).getWriter();
+  const messages = new MessageReader(Readable.toWeb(child.stdout!).getReader());
+  const watchdog = setTimeout(() => child.kill("SIGKILL"), TIMEOUT_MS);
 
   try {
     await writer.write(
@@ -150,7 +152,7 @@ async function smokeTest(server: { name: string; entry: string }) {
         id: 1,
         method: "initialize",
         params: {
-          processId: Deno.pid,
+          processId: process.pid,
           rootUri: null,
           capabilities: {},
         },
@@ -183,12 +185,13 @@ async function smokeTest(server: { name: string; entry: string }) {
     await writer.write(frame({ jsonrpc: "2.0", method: "exit" }));
     await writer.close();
 
-    const status = await child.status;
-    if (!status.success) {
-      throw new Error(`${server.name} exited with code ${status.code}`);
+    const [code] = await once(child, "exit");
+    if (code !== 0) {
+      throw new Error(`${server.name} exited with code ${code}`);
     }
-    console.log(`  exit OK (code ${status.code})`);
+    console.log(`  exit OK (code ${code})`);
   } finally {
+    clearTimeout(watchdog);
     try {
       await writer.close();
     } catch {
@@ -203,7 +206,7 @@ async function smokeTest(server: { name: string; entry: string }) {
 }
 
 async function main() {
-  console.log(`Smoke-testing servers in ${JSR_DIR}\n`);
+  console.log(`Smoke-testing servers in ${ROOT}\n`);
   for (const server of SERVERS) {
     await smokeTest(server);
     console.log("");
