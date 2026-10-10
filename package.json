@@ -25,13 +25,19 @@
     "extract": "node --experimental-strip-types scripts/extract.ts",
     "check": "tsc --noEmit -p scripts/tsconfig.check.json",
     "build": "rolldown -c && node --experimental-strip-types scripts/copy-assets.ts",
-    "smoke": "node --experimental-strip-types scripts/smoke-test.ts"
+    "smoke": "node --experimental-strip-types scripts/smoke-test.ts",
+    "format": "oxfmt --check scripts rolldown.config.ts",
+    "format:fix": "oxfmt scripts rolldown.config.ts",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
   },
   "dependencies": {
     "typescript": "6.0.3"
   },
   "devDependencies": {
     "@types/node": "^24.12.4",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
     "rolldown": "^1.0.0"
   }
 }

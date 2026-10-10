@@ -84,10 +84,14 @@ Requires Node.js ≥ 22, `git`, and `npm`.
 ```sh
 npm install
 npm run extract -- 1.140.0   # writes servers/
-npm run check                # type-check the sources
-npm run build                # bundles dist/ and copies assets
-npm run smoke                # LSP handshake smoke test
+npm run format             # check formatting (oxfmt)
+npm run lint               # lint (oxlint)
+npm run check              # type-check the sources
+npm run build              # bundles dist/ and copies assets
+npm run smoke              # LSP handshake smoke test
 ```
+
+`npm run format:fix` and `npm run lint:fix` apply the fixes in place.
 
 ## Notes
 
