@@ -17,7 +17,7 @@ smoke-tests them over LSP stdio, commits the bundles, and tags the release.
 Requires Node.js ≥ 22.
 
 ```sh
-npm install --global https://github.com/kands-code/vscode-language-servers/archive/refs/tags/1.142.0.tar.gz
+npm install --global https://github.com/kands-code/vscode-language-servers/archive/refs/tags/1.143.1.tar.gz
 ```
 
 This installs all three binaries. To install another version, change the tag.
