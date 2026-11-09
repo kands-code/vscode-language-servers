@@ -1,6 +1,6 @@
 {
   "name": "@qarks/vscode-language-servers",
-  "version": "1.144.0",
+  "version": "1.145.2",
   "description": "CSS, HTML, and JSON language servers extracted from microsoft/vscode, installable from GitHub",
   "license": "MIT",
   "type": "module",
