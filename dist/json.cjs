@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-//#region \0rolldown/runtime.js
+// \0rolldown/runtime.js
 var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
+var __defProp$1 = Object.defineProperty;
+var __getOwnPropDesc$1 = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames$1 = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __hasOwnProp$1 = Object.prototype.hasOwnProperty;
 var __esmMin = (fn, res, err) => () => {
 	if (err) throw err[0];
 	try {
@@ -14,34 +14,33 @@ var __esmMin = (fn, res, err) => () => {
 		throw err = [e], e;
 	}
 };
-var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
-var __exportAll = (all, no_symbols) => {
-	let target = {};
-	for (var name in all) __defProp(target, name, {
+var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
+var __exportAll = (all, flags) => {
+	let target = Object.setPrototypeOf({}, null);
+	for (var name in all) __defProp$1(target, name, {
 		get: all[name],
 		enumerable: true
 	});
-	if (!no_symbols) __defProp(target, Symbol.toStringTag, { value: "Module" });
-	return target;
+	if (!(flags & 1)) __defProp$1(target, Symbol.toStringTag, { value: "Module" });
+	return flags & 2 ? target : Object.preventExtensions(target);
 };
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
+var __copyProps$1 = (to, from, except, desc) => {
+	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames$1(from), i = 0, n = keys.length, key; i < n; i++) {
 		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+		if (!__hasOwnProp$1.call(to, key) && key !== except) __defProp$1(to, key, {
 			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+			enumerable: !(desc = __getOwnPropDesc$1(from, key)) || desc.enumerable
 		});
 	}
 	return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps$1(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp$1.call(mod, "default") ? __defProp$1(target, "default", {
 	value: mod,
 	enumerable: true
 }) : target, mod));
-var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-//#endregion
+var __toCommonJS$1 = (mod) => __hasOwnProp$1.call(mod, "module.exports") ? mod["module.exports"] : __copyProps$1(__defProp$1({}, "__esModule", { value: true }), mod);
 let fs = require("fs");
-//#region servers/json/node_modules/vscode-languageserver/lib/common/utils/is.js
+// servers/json/node_modules/vscode-languageserver/lib/common/utils/is.js
 var require_is$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.boolean = boolean;
@@ -81,8 +80,7 @@ var require_is$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return value && func(value.then);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/is.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/is.js
 var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.boolean = boolean;
@@ -114,10 +112,9 @@ var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return array(value) && value.every((elem) => string(elem));
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/messages.js
-var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/messages.js
+var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$19) => {
+	var __createBinding = this$19 && this$19.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -131,7 +128,7 @@ var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$19 && this$19.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -139,7 +136,7 @@ var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$19 && this$19.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -549,8 +546,7 @@ var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Message.isResponse = isResponse;
 	})(Message || (exports.Message = Message = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LRUCache = exports.LinkedMap = exports.Touch = void 0;
@@ -896,8 +892,7 @@ var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.LRUCache = LRUCache;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/disposable.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/disposable.js
 var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Disposable = void 0;
@@ -909,8 +904,7 @@ var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Disposable.create = create;
 	})(Disposable || (exports.Disposable = Disposable = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/ral.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/ral.js
 var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	let _ral;
@@ -927,10 +921,9 @@ var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 	})(RAL || (RAL = {}));
 	exports.default = RAL;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/events.js
-var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/events.js
+var require_events = /* @__PURE__ */ __commonJSMin(((exports, module, this$18) => {
+	var __importDefault = this$18 && this$18.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1028,10 +1021,9 @@ var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 	};
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/cancellation.js
-var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports, module, this$17) => {
+	var __createBinding = this$17 && this$17.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -1045,7 +1037,7 @@ var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$17 && this$17.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -1053,7 +1045,7 @@ var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$17 && this$17.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -1072,7 +1064,7 @@ var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+	var __importDefault = this$17 && this$17.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1146,8 +1138,7 @@ var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.CancellationTokenSource = CancellationTokenSource;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -1214,10 +1205,9 @@ var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) =
 	};
 	exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/semaphore.js
-var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/semaphore.js
+var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports, module, this$16) => {
+	var __importDefault = this$16 && this$16.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1280,10 +1270,9 @@ var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.Semaphore = Semaphore;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/messageReader.js
-var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports, module, this$15) => {
+	var __createBinding = this$15 && this$15.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -1297,7 +1286,7 @@ var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$15 && this$15.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -1305,7 +1294,7 @@ var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$15 && this$15.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -1324,7 +1313,7 @@ var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+	var __importDefault = this$15 && this$15.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1515,10 +1504,9 @@ var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
-var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports, module, this$14) => {
+	var __createBinding = this$14 && this$14.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -1532,7 +1520,7 @@ var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$14 && this$14.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -1540,7 +1528,7 @@ var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$14 && this$14.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -1559,7 +1547,7 @@ var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+	var __importDefault = this$14 && this$14.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1675,8 +1663,7 @@ var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+// servers/json/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AbstractMessageBuffer = void 0;
@@ -1804,10 +1791,9 @@ var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.AbstractMessageBuffer = AbstractMessageBuffer;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/connection.js
-var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/connection.js
+var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$13) => {
+	var __createBinding = this$13 && this$13.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -1821,7 +1807,7 @@ var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$13 && this$13.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -1829,7 +1815,7 @@ var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$13 && this$13.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -1848,7 +1834,7 @@ var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+	var __importDefault = this$13 && this$13.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -2763,10 +2749,9 @@ var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return connection;
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/common/api.js
-var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+// servers/json/node_modules/vscode-jsonrpc/lib/common/api.js
+var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports, module, this$12) => {
+	var __importDefault = this$12 && this$12.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -3162,9 +3147,8 @@ var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	});
 	exports.RAL = __importDefault(require_ral()).default;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-types/lib/esm/main.js
-var main_exports = /* @__PURE__ */ __exportAll({
+// servers/json/node_modules/vscode-languageserver-types/lib/esm/main.js
+var main_exports$1 = /* @__PURE__ */ __exportAll({
 	AnnotatedTextEdit: () => AnnotatedTextEdit,
 	ApplyKind: () => ApplyKind,
 	ChangeAnnotation: () => ChangeAnnotation,
@@ -5206,8 +5190,7 @@ var init_main = __esmMin((() => {
 		Is.typedArray = typedArray;
 	})(Is || (Is = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/messages.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/messages.js
 var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CM = exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
@@ -5289,8 +5272,7 @@ var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 		CM.create = create;
 	})(CM || (exports.CM = CM = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/utils/is.js
 var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.boolean = boolean;
@@ -5330,8 +5312,7 @@ var require_is = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return value !== null && typeof value === "object";
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.implementation.js
 var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ImplementationRequest = void 0;
@@ -5349,8 +5330,7 @@ var require_protocol_implementation = /* @__PURE__ */ __commonJSMin(((exports) =
 		ImplementationRequest.capabilities = messages_1.CM.create("textDocument.implementation", "implementationProvider");
 	})(ImplementationRequest || (exports.ImplementationRequest = ImplementationRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.typeDefinition.js
 var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TypeDefinitionRequest = void 0;
@@ -5368,8 +5348,7 @@ var require_protocol_typeDefinition = /* @__PURE__ */ __commonJSMin(((exports) =
 		TypeDefinitionRequest.capabilities = messages_1.CM.create("textDocument.typeDefinition", "typeDefinitionProvider");
 	})(TypeDefinitionRequest || (exports.TypeDefinitionRequest = TypeDefinitionRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.workspaceFolder.js
 var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
@@ -5396,8 +5375,7 @@ var require_protocol_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) 
 		DidChangeWorkspaceFoldersNotification.capabilities = messages_1.CM.create(void 0, "workspace.workspaceFolders.changeNotifications");
 	})(DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = DidChangeWorkspaceFoldersNotification = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.configuration.js
 var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConfigurationRequest = void 0;
@@ -5419,8 +5397,7 @@ var require_protocol_configuration = /* @__PURE__ */ __commonJSMin(((exports) =>
 		ConfigurationRequest.capabilities = messages_1.CM.create("workspace.configuration", void 0);
 	})(ConfigurationRequest || (exports.ConfigurationRequest = ConfigurationRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.colorProvider.js
 var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
@@ -5452,8 +5429,7 @@ var require_protocol_colorProvider = /* @__PURE__ */ __commonJSMin(((exports) =>
 		ColorPresentationRequest.capabilities = messages_1.CM.create("textDocument.colorProvider", "colorProvider");
 	})(ColorPresentationRequest || (exports.ColorPresentationRequest = ColorPresentationRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.foldingRange.js
 var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = void 0;
@@ -5484,8 +5460,7 @@ var require_protocol_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => 
 		FoldingRangeRefreshRequest.capabilities = messages_1.CM.create("workspace.foldingRange.refreshSupport", void 0);
 	})(FoldingRangeRefreshRequest || (exports.FoldingRangeRefreshRequest = FoldingRangeRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.declaration.js
 var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DeclarationRequest = void 0;
@@ -5504,8 +5479,7 @@ var require_protocol_declaration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		DeclarationRequest.capabilities = messages_1.CM.create("textDocument.declaration", "declarationProvider");
 	})(DeclarationRequest || (exports.DeclarationRequest = DeclarationRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.selectionRange.js
 var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SelectionRangeRequest = void 0;
@@ -5524,8 +5498,7 @@ var require_protocol_selectionRange = /* @__PURE__ */ __commonJSMin(((exports) =
 		SelectionRangeRequest.capabilities = messages_1.CM.create("textDocument.selectionRange", "selectionRangeProvider");
 	})(SelectionRangeRequest || (exports.SelectionRangeRequest = SelectionRangeRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.progress.js
 var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
@@ -5561,8 +5534,7 @@ var require_protocol_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 	})(WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = WorkDoneProgressCancelNotification = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.callHierarchy.js
 var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
@@ -5605,8 +5577,7 @@ var require_protocol_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) =>
 		CallHierarchyOutgoingCallsRequest.capabilities = messages_1.CM.create("textDocument.callHierarchy", "callHierarchyProvider");
 	})(CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = CallHierarchyOutgoingCallsRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.semanticTokens.js
 var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
@@ -5664,8 +5635,7 @@ var require_protocol_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) =
 		SemanticTokensRefreshRequest.capabilities = messages_1.CM.create("workspace.semanticTokens.refreshSupport", void 0);
 	})(SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = SemanticTokensRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.showDocument.js
 var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ShowDocumentRequest = void 0;
@@ -5686,8 +5656,7 @@ var require_protocol_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => 
 		ShowDocumentRequest.capabilities = messages_1.CM.create("window.showDocument.support", void 0);
 	})(ShowDocumentRequest || (exports.ShowDocumentRequest = ShowDocumentRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.linkedEditingRange.js
 var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LinkedEditingRangeRequest = void 0;
@@ -5705,8 +5674,7 @@ var require_protocol_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((export
 		LinkedEditingRangeRequest.capabilities = messages_1.CM.create("textDocument.linkedEditingRange", "linkedEditingRangeProvider");
 	})(LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = LinkedEditingRangeRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.fileOperations.js
 var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
@@ -5811,8 +5779,7 @@ var require_protocol_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) =
 		WillDeleteFilesRequest.capabilities = messages_1.CM.create("workspace.fileOperations.willDelete", "workspace.fileOperations.willDelete");
 	})(WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = WillDeleteFilesRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.moniker.js
 var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
@@ -5879,8 +5846,7 @@ var require_protocol_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 		MonikerRequest.capabilities = messages_1.CM.create("textDocument.moniker", "monikerProvider");
 	})(MonikerRequest || (exports.MonikerRequest = MonikerRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.typeHierarchy.js
 var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
@@ -5921,8 +5887,7 @@ var require_protocol_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) =>
 		TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 	})(TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = TypeHierarchySubtypesRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineValue.js
 var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
@@ -5952,8 +5917,7 @@ var require_protocol_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 		InlineValueRefreshRequest.capabilities = messages_1.CM.create("workspace.inlineValue.refreshSupport", void 0);
 	})(InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = InlineValueRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlayHint.js
 var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
@@ -5997,10 +5961,9 @@ var require_protocol_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 		InlayHintRefreshRequest.capabilities = messages_1.CM.create("workspace.inlayHint.refreshSupport", void 0);
 	})(InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = InlayHintRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
-var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.js
+var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports, module, this$11) => {
+	var __createBinding = this$11 && this$11.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -6014,7 +5977,7 @@ var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$11 && this$11.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -6022,7 +5985,7 @@ var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$11 && this$11.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -6115,10 +6078,9 @@ var require_protocol_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 		DiagnosticRefreshRequest.capabilities = messages_1.CM.create("workspace.diagnostics.refreshSupport", void 0);
 	})(DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = DiagnosticRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
-var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.notebook.js
+var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports, module, this$10) => {
+	var __createBinding = this$10 && this$10.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -6132,7 +6094,7 @@ var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$10 && this$10.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -6140,7 +6102,7 @@ var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$10 && this$10.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -6161,7 +6123,7 @@ var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
-	const vscode_languageserver_types_1 = (init_main(), __toCommonJS(main_exports));
+	const vscode_languageserver_types_1 = (init_main(), __toCommonJS$1(main_exports$1));
 	const Is = __importStar(require_is());
 	const messages_1 = require_messages();
 	/**
@@ -6339,8 +6301,7 @@ var require_protocol_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 		DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 	})(DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = DidCloseNotebookDocumentNotification = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.inlineCompletion.js
 var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlineCompletionRequest = void 0;
@@ -6360,8 +6321,7 @@ var require_protocol_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports)
 		InlineCompletionRequest.capabilities = messages_1.CM.create("textDocument.inlineCompletion", "inlineCompletionProvider");
 	})(InlineCompletionRequest || (exports.InlineCompletionRequest = InlineCompletionRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.textDocumentContent.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.textDocumentContent.js
 var require_protocol_textDocumentContent = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TextDocumentContentRefreshRequest = exports.TextDocumentContentRequest = void 0;
@@ -6392,10 +6352,9 @@ var require_protocol_textDocumentContent = /* @__PURE__ */ __commonJSMin(((expor
 		TextDocumentContentRefreshRequest.type = new messages_1.ProtocolRequestType(TextDocumentContentRefreshRequest.method);
 	})(TextDocumentContentRefreshRequest || (exports.TextDocumentContentRefreshRequest = TextDocumentContentRefreshRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.js
-var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/protocol.js
+var require_protocol = /* @__PURE__ */ __commonJSMin(((exports, module, this$9) => {
+	var __createBinding = this$9 && this$9.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -6409,7 +6368,7 @@ var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$9 && this$9.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -6417,7 +6376,7 @@ var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$9 && this$9.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -6441,7 +6400,7 @@ var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 	exports.UniquenessLevel = exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.WillRenameFilesRequest = exports.DidRenameFilesNotification = exports.WillCreateFilesRequest = exports.DidCreateFilesNotification = exports.FileOperationPatternKind = exports.LinkedEditingRangeRequest = exports.ShowDocumentRequest = exports.SemanticTokensRegistrationType = exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.TokenFormat = exports.CallHierarchyPrepareRequest = exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = exports.SelectionRangeRequest = exports.DeclarationRequest = exports.FoldingRangeRefreshRequest = exports.FoldingRangeRequest = exports.ColorPresentationRequest = exports.DocumentColorRequest = exports.ConfigurationRequest = exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = exports.TypeDefinitionRequest = exports.ImplementationRequest = exports.ApplyWorkspaceEditRequest = exports.ExecuteCommandRequest = exports.PrepareRenameRequest = exports.RenameRequest = exports.PrepareSupportDefaultBehavior = exports.DocumentOnTypeFormattingRequest = exports.DocumentRangesFormattingRequest = exports.DocumentRangeFormattingRequest = exports.DocumentFormattingRequest = exports.DocumentLinkResolveRequest = exports.DocumentLinkRequest = exports.CodeLensRefreshRequest = exports.CodeLensResolveRequest = exports.CodeLensRequest = exports.WorkspaceSymbolResolveRequest = exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = void 0;
 	exports.TextDocumentContentRefreshRequest = exports.TextDocumentContentRequest = exports.InlineCompletionRequest = exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = exports.InlineValueRefreshRequest = exports.InlineValueRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchySubtypesRequest = exports.TypeHierarchyPrepareRequest = exports.MonikerRequest = exports.MonikerKind = void 0;
 	const messages_1 = require_messages();
-	const vscode_languageserver_types_1 = (init_main(), __toCommonJS(main_exports));
+	const vscode_languageserver_types_1 = (init_main(), __toCommonJS$1(main_exports$1));
 	const Is = __importStar(require_is());
 	const protocol_implementation_1 = require_protocol_implementation();
 	Object.defineProperty(exports, "ImplementationRequest", {
@@ -7717,8 +7676,7 @@ var require_protocol = /* @__PURE__ */ __commonJSMin(((exports) => {
 		ApplyWorkspaceEditRequest.capabilities = messages_1.CM.create("workspace.applyEdit", void 0);
 	})(ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = ApplyWorkspaceEditRequest = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/connection.js
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/connection.js
 var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createProtocolConnection = createProtocolConnection;
@@ -7728,10 +7686,9 @@ var require_connection = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return (0, vscode_jsonrpc_1.createMessageConnection)(input, output, logger, options);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/common/api.js
-var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver-protocol/lib/common/api.js
+var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports, module, this$8) => {
+	var __createBinding = this$8 && this$8.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -7745,13 +7702,13 @@ var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __exportStar = exports && exports.__exportStar || function(m, exports$5) {
-		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$5, p)) __createBinding(exports$5, m, p);
+	var __exportStar = this$8 && this$8.__exportStar || function(m, exports) {
+		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
 	__exportStar(require_api$2(), exports);
-	__exportStar((init_main(), __toCommonJS(main_exports)), exports);
+	__exportStar((init_main(), __toCommonJS$1(main_exports$1)), exports);
 	__exportStar(require_messages(), exports);
 	__exportStar(require_protocol(), exports);
 	var connection_1 = require_connection();
@@ -7812,8 +7769,7 @@ var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 	})(LSPErrorCodes || (exports.LSPErrorCodes = LSPErrorCodes = {}));
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/utils/uuid.js
+// servers/json/node_modules/vscode-languageserver/lib/common/utils/uuid.js
 var require_uuid = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.empty = void 0;
@@ -7929,8 +7885,7 @@ var require_uuid = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return v4().asHex();
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/progress.js
+// servers/json/node_modules/vscode-languageserver/lib/common/progress.js
 var require_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProgressFeature = void 0;
@@ -8069,10 +8024,9 @@ var require_progress = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return new ResultProgressReporterImpl(connection, token);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/configuration.js
-var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver/lib/common/configuration.js
+var require_configuration = /* @__PURE__ */ __commonJSMin(((exports, module, this$7) => {
+	var __createBinding = this$7 && this$7.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -8086,7 +8040,7 @@ var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$7 && this$7.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -8094,7 +8048,7 @@ var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$7 && this$7.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -8135,8 +8089,7 @@ var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.ConfigurationFeature = ConfigurationFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/workspaceFolder.js
+// servers/json/node_modules/vscode-languageserver/lib/common/workspaceFolder.js
 var require_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WorkspaceFoldersFeature = void 0;
@@ -8177,8 +8130,7 @@ var require_workspaceFolder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.WorkspaceFoldersFeature = WorkspaceFoldersFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/callHierarchy.js
+// servers/json/node_modules/vscode-languageserver/lib/common/callHierarchy.js
 var require_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CallHierarchyFeature = void 0;
@@ -8210,8 +8162,7 @@ var require_callHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.CallHierarchyFeature = CallHierarchyFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/semanticTokens.js
+// servers/json/node_modules/vscode-languageserver/lib/common/semanticTokens.js
 var require_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SemanticTokensBuilder = exports.SemanticTokensDiff = exports.SemanticTokensFeature = void 0;
@@ -8424,8 +8375,7 @@ var require_semanticTokens = /* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 	};
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/showDocument.js
+// servers/json/node_modules/vscode-languageserver/lib/common/showDocument.js
 var require_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ShowDocumentFeature = void 0;
@@ -8439,8 +8389,7 @@ var require_showDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.ShowDocumentFeature = ShowDocumentFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/fileOperations.js
+// servers/json/node_modules/vscode-languageserver/lib/common/fileOperations.js
 var require_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FileOperationsFeature = void 0;
@@ -8481,8 +8430,7 @@ var require_fileOperations = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.FileOperationsFeature = FileOperationsFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/linkedEditingRange.js
+// servers/json/node_modules/vscode-languageserver/lib/common/linkedEditingRange.js
 var require_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LinkedEditingRangeFeature = void 0;
@@ -8498,8 +8446,7 @@ var require_linkedEditingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.LinkedEditingRangeFeature = LinkedEditingRangeFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/typeHierarchy.js
+// servers/json/node_modules/vscode-languageserver/lib/common/typeHierarchy.js
 var require_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TypeHierarchyFeature = void 0;
@@ -8531,8 +8478,7 @@ var require_typeHierarchy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.TypeHierarchyFeature = TypeHierarchyFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/inlineValue.js
+// servers/json/node_modules/vscode-languageserver/lib/common/inlineValue.js
 var require_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlineValueFeature = void 0;
@@ -8555,8 +8501,7 @@ var require_inlineValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.InlineValueFeature = InlineValueFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/foldingRange.js
+// servers/json/node_modules/vscode-languageserver/lib/common/foldingRange.js
 var require_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FoldingRangeFeature = void 0;
@@ -8580,8 +8525,7 @@ var require_foldingRange = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.FoldingRangeFeature = FoldingRangeFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/inlayHint.js
+// servers/json/node_modules/vscode-languageserver/lib/common/inlayHint.js
 var require_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlayHintFeature = void 0;
@@ -8609,8 +8553,7 @@ var require_inlayHint = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.InlayHintFeature = InlayHintFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/diagnostic.js
+// servers/json/node_modules/vscode-languageserver/lib/common/diagnostic.js
 var require_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DiagnosticFeature = void 0;
@@ -8638,8 +8581,7 @@ var require_diagnostic = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.DiagnosticFeature = DiagnosticFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/textDocuments.js
+// servers/json/node_modules/vscode-languageserver/lib/common/textDocuments.js
 var require_textDocuments = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TextDocuments = void 0;
@@ -8813,8 +8755,7 @@ var require_textDocuments = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.TextDocuments = TextDocuments;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/notebook.js
+// servers/json/node_modules/vscode-languageserver/lib/common/notebook.js
 var require_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NotebookDocuments = exports.NotebookSyncFeature = void 0;
@@ -9057,8 +8998,7 @@ var require_notebook = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.NotebookDocuments = NotebookDocuments;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/moniker.js
+// servers/json/node_modules/vscode-languageserver/lib/common/moniker.js
 var require_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MonikerFeature = void 0;
@@ -9077,8 +9017,7 @@ var require_moniker = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.MonikerFeature = MonikerFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/inlineCompletion.js
+// servers/json/node_modules/vscode-languageserver/lib/common/inlineCompletion.js
 var require_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InlineCompletionFeature = void 0;
@@ -9096,8 +9035,7 @@ var require_inlineCompletion = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.InlineCompletionFeature = InlineCompletionFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/textDocumentContent.js
+// servers/json/node_modules/vscode-languageserver/lib/common/textDocumentContent.js
 var require_textDocumentContent = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TextDocumentContentFeature = void 0;
@@ -9120,10 +9058,9 @@ var require_textDocumentContent = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.TextDocumentContentFeature = TextDocumentContentFeature;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/server.js
-var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver/lib/common/server.js
+var require_server = /* @__PURE__ */ __commonJSMin(((exports, module, this$6) => {
+	var __createBinding = this$6 && this$6.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -9137,7 +9074,7 @@ var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$6 && this$6.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -9145,7 +9082,7 @@ var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$6 && this$6.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -9858,10 +9795,9 @@ var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return protocolConnection;
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/node/files.js
-var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver/lib/node/files.js
+var require_files = /* @__PURE__ */ __commonJSMin(((exports, module, this$5) => {
+	var __createBinding = this$5 && this$5.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -9875,7 +9811,7 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$5 && this$5.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -9883,7 +9819,7 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$5 && this$5.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -9910,8 +9846,8 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 	exports.resolveGlobalYarnPath = resolveGlobalYarnPath;
 	exports.resolveModulePath = resolveModulePath;
 	const url = __importStar(require("url"));
-	const path$1 = __importStar(require("path"));
-	const fs$3 = __importStar(require("fs"));
+	const path = __importStar(require("path"));
+	const fs = __importStar(require("fs"));
 	const child_process_1 = require("child_process");
 	/**
 	* @deprecated Use the `vscode-uri` npm module which provides a more
@@ -9927,7 +9863,7 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 			const second = segments[1];
 			if (first.length === 0 && second.length > 1 && second[1] === ":") segments.shift();
 		}
-		return path$1.normalize(segments.join("/"));
+		return path.normalize(segments.join("/"));
 	}
 	function isWindows() {
 		return process.platform === "win32";
@@ -9955,8 +9891,8 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 			const env = process.env;
 			const newEnv = Object.create(null);
 			Object.keys(env).forEach((key) => newEnv[key] = env[key]);
-			if (nodePath && fs$3.existsSync(nodePath)) {
-				if (newEnv[nodePathKey]) newEnv[nodePathKey] = nodePath + path$1.delimiter + newEnv[nodePathKey];
+			if (nodePath && fs.existsSync(nodePath)) {
+				if (newEnv[nodePathKey]) newEnv[nodePathKey] = nodePath + path.delimiter + newEnv[nodePathKey];
 				else newEnv[nodePathKey] = nodePath;
 				if (tracer) tracer(`NODE_PATH value is: ${newEnv[nodePathKey]}`);
 			}
@@ -10025,8 +9961,8 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 			const prefix = stdout.trim();
 			if (tracer) tracer(`'npm config get prefix' value is: ${prefix}`);
 			if (prefix.length > 0) {
-				if (isWindows()) return path$1.join(prefix, "node_modules");
-				else return path$1.join(prefix, "lib", "node_modules");
+				if (isWindows()) return path.join(prefix, "node_modules");
+				else return path.join(prefix, "lib", "node_modules");
 			}
 			return;
 		} catch (err) {
@@ -10061,7 +9997,7 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 			const lines = stdout.trim().split(/\r?\n/);
 			for (const line of lines) try {
 				const yarn = JSON.parse(line);
-				if (yarn.type === "log") return path$1.join(yarn.data, "node_modules");
+				if (yarn.type === "log") return path.join(yarn.data, "node_modules");
 			} catch (e) {}
 			return;
 		} catch (err) {
@@ -10076,19 +10012,19 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 		function isCaseSensitive() {
 			if (_isCaseSensitive !== void 0) return _isCaseSensitive;
 			if (process.platform === "win32") _isCaseSensitive = false;
-			else _isCaseSensitive = !fs$3.existsSync(__filename.toUpperCase()) || !fs$3.existsSync(__filename.toLowerCase());
+			else _isCaseSensitive = !fs.existsSync(__filename.toUpperCase()) || !fs.existsSync(__filename.toLowerCase());
 			return _isCaseSensitive;
 		}
 		FileSystem.isCaseSensitive = isCaseSensitive;
 		function isParent(parent, child) {
-			if (isCaseSensitive()) return path$1.normalize(child).indexOf(path$1.normalize(parent)) === 0;
-			else return path$1.normalize(child).toLowerCase().indexOf(path$1.normalize(parent).toLowerCase()) === 0;
+			if (isCaseSensitive()) return path.normalize(child).indexOf(path.normalize(parent)) === 0;
+			else return path.normalize(child).toLowerCase().indexOf(path.normalize(parent).toLowerCase()) === 0;
 		}
 		FileSystem.isParent = isParent;
 	})(FileSystem || (exports.FileSystem = FileSystem = {}));
 	function resolveModulePath(workspaceRoot, moduleName, nodePath, tracer) {
 		if (nodePath) {
-			if (!path$1.isAbsolute(nodePath)) nodePath = path$1.join(workspaceRoot, nodePath);
+			if (!path.isAbsolute(nodePath)) nodePath = path.join(workspaceRoot, nodePath);
 			return resolve(moduleName, nodePath, nodePath, tracer).then((value) => {
 				if (FileSystem.isParent(nodePath, value)) return value;
 				else return Promise.reject(/* @__PURE__ */ new Error(`Failed to load ${moduleName} from node path location.`));
@@ -10098,8 +10034,7 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 		} else return resolve(moduleName, resolveGlobalNodePath(tracer), workspaceRoot, tracer);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/node/ril.js
+// servers/json/node_modules/vscode-jsonrpc/lib/node/ril.js
 var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	const util_1 = require("util");
@@ -10236,10 +10171,9 @@ var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 	})(RIL || (RIL = {}));
 	exports.default = RIL;
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-jsonrpc/lib/node/main.js
-var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-jsonrpc/lib/node/main.js
+var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports, module, this$4) => {
+	var __createBinding = this$4 && this$4.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -10253,7 +10187,7 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$4 && this$4.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -10261,7 +10195,7 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$4 && this$4.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -10280,10 +10214,10 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __exportStar = exports && exports.__exportStar || function(m, exports$4) {
-		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$4, p)) __createBinding(exports$4, m, p);
+	var __exportStar = this$4 && this$4.__exportStar || function(m, exports) {
+		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
-	var __importDefault = exports && exports.__importDefault || function(mod) {
+	var __importDefault = this$4 && this$4.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -10298,7 +10232,7 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	ril_1.default.install();
 	const path = __importStar(require("path"));
 	const os = __importStar(require("os"));
-	const fs$2 = __importStar(require("fs"));
+	const fs = __importStar(require("fs"));
 	const crypto_1 = require("crypto");
 	const net_1 = require("net");
 	const api_1 = require_api$2();
@@ -10428,7 +10362,7 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (process.platform === "win32") return `\\\\.\\pipe\\lsp-${(0, crypto_1.randomBytes)(16).toString("hex")}-sock`;
 		let randomLength = 32;
 		const fixedLength = 10;
-		const tmpDir = fs$2.realpathSync(XDG_RUNTIME_DIR ?? os.tmpdir());
+		const tmpDir = fs.realpathSync(XDG_RUNTIME_DIR ?? os.tmpdir());
 		const limit = safeIpcPathLengths.get(process.platform);
 		if (limit !== void 0) randomLength = Math.min(limit - tmpDir.length - fixedLength, randomLength);
 		if (randomLength < 16) throw new Error(`Unable to generate a random pipe name with ${randomLength} characters.`);
@@ -10497,10 +10431,9 @@ var require_main$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return (0, api_1.createMessageConnection)(reader, writer, logger, options);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-protocol/lib/node/main.js
-var require_main$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver-protocol/lib/node/main.js
+var require_main$3 = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+	var __createBinding = this$3 && this$3.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -10514,8 +10447,8 @@ var require_main$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __exportStar = exports && exports.__exportStar || function(m, exports$3) {
-		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$3, p)) __createBinding(exports$3, m, p);
+	var __exportStar = this$3 && this$3.__exportStar || function(m, exports) {
+		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createProtocolConnection = createProtocolConnection;
@@ -10526,10 +10459,9 @@ var require_main$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		return (0, node_1.createMessageConnection)(input, output, logger, options);
 	}
 }));
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver/lib/common/api.js
-var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/node_modules/vscode-languageserver/lib/common/api.js
+var require_api = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
+	var __createBinding = this$2 && this$2.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -10543,8 +10475,8 @@ var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __exportStar = exports && exports.__exportStar || function(m, exports$2) {
-		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$2, p)) __createBinding(exports$2, m, p);
+	var __exportStar = this$2 && this$2.__exportStar || function(m, exports) {
+		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProposedFeatures = exports.NotebookDocuments = exports.TextDocuments = exports.SemanticTokensBuilder = void 0;
@@ -10576,10 +10508,9 @@ var require_api = /* @__PURE__ */ __commonJSMin(((exports) => {
 		ProposedFeatures.all = { __brand: "features" };
 	})(ProposedFeatures || (exports.ProposedFeatures = ProposedFeatures = {}));
 }));
-//#endregion
-//#region servers/json/utils/runner.ts
-var import_main = (/* @__PURE__ */ __commonJSMin(((exports) => {
-	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
+// servers/json/utils/runner.ts
+var import_main = (/* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
+	var __createBinding = this$1 && this$1.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
 		var desc = Object.getOwnPropertyDescriptor(m, k);
 		if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) desc = {
@@ -10593,7 +10524,7 @@ var import_main = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		if (k2 === void 0) k2 = k;
 		o[k2] = m[k];
 	}));
-	var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+	var __setModuleDefault = this$1 && this$1.__setModuleDefault || (Object.create ? (function(o, v) {
 		Object.defineProperty(o, "default", {
 			enumerable: true,
 			value: v
@@ -10601,7 +10532,7 @@ var import_main = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	}) : function(o, v) {
 		o["default"] = v;
 	});
-	var __importStar = exports && exports.__importStar || (function() {
+	var __importStar = this$1 && this$1.__importStar || (function() {
 		var ownKeys = function(o) {
 			ownKeys = Object.getOwnPropertyNames || function(o) {
 				var ar = [];
@@ -10620,8 +10551,8 @@ var import_main = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return result;
 		};
 	})();
-	var __exportStar = exports && exports.__exportStar || function(m, exports$1) {
-		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports$1, p)) __createBinding(exports$1, m, p);
+	var __exportStar = this$1 && this$1.__exportStar || function(m, exports) {
+		for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Files = void 0;
@@ -10867,8 +10798,7 @@ function runSafe(runtime, func, errorVal, errorMessage, token) {
 function cancelValue() {
 	return new import_api.ResponseError(import_api.LSPErrorCodes.RequestCancelled, "Request cancelled");
 }
-//#endregion
-//#region servers/json/utils/validation.ts
+// servers/json/utils/validation.ts
 function registerDiagnosticsPushSupport(documents, connection, runtime, validate) {
 	const pendingValidationRequests = {};
 	const validationDelayMs = 500;
@@ -10944,8 +10874,7 @@ function registerDiagnosticsPullSupport(documents, connection, runtime, validate
 		}
 	};
 }
-//#endregion
-//#region servers/json/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// servers/json/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 /**
 * Creates a JSON scanner on the given text.
 * If ignoreTrivia is set, whitespaces or comments are ignored.
@@ -11327,8 +11256,7 @@ var CharacterCodes;
 	CharacterCodes[CharacterCodes["formFeed"] = 12] = "formFeed";
 	CharacterCodes[CharacterCodes["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
-//#endregion
-//#region servers/json/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// servers/json/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 const cachedSpaces = new Array(20).fill(0).map((_, index) => {
 	return " ".repeat(index);
 });
@@ -11362,8 +11290,7 @@ const supportedEols = [
 	"\r",
 	"\r\n"
 ];
-//#endregion
-//#region servers/json/node_modules/jsonc-parser/lib/esm/impl/format.js
+// servers/json/node_modules/jsonc-parser/lib/esm/impl/format.js
 function format$2(documentText, range, options) {
 	let initialIndentLevel;
 	let formatText;
@@ -11531,8 +11458,7 @@ function getEOL(options, text) {
 function isEOL$1(text, offset) {
 	return "\r\n".indexOf(text.charAt(offset)) !== -1;
 }
-//#endregion
-//#region servers/json/node_modules/jsonc-parser/lib/esm/impl/parser.js
+// servers/json/node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptionsConfigs;
 (function(ParseOptionsConfigs) {
 	ParseOptionsConfigs.DEFAULT = { allowTrailingComma: false };
@@ -11834,8 +11760,7 @@ function visit(text, visitor, options = ParseOptionsConfigs.DEFAULT) {
 	if (_scanner.getToken() !== 17) handleError(9, [], []);
 	return true;
 }
-//#endregion
-//#region servers/json/node_modules/jsonc-parser/lib/esm/main.js
+// servers/json/node_modules/jsonc-parser/lib/esm/main.js
 /**
 * Creates a JSON scanner on the given text.
 * If ignoreTrivia is set, whitespaces or comments are ignored.
@@ -11919,8 +11844,7 @@ var ParseErrorCode;
 function format$1(documentText, range, options) {
 	return format$2(documentText, range, options);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/objects.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/objects.js
 function equals(one, other) {
 	if (one === other) return true;
 	if (one === null || one === void 0 || other === null || other === void 0) return false;
@@ -11958,8 +11882,7 @@ function isString(val) {
 function isObject(val) {
 	return typeof val === "object" && val !== null && !Array.isArray(val);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/strings.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/strings.js
 function startsWith(haystack, needle) {
 	if (haystack.length < needle.length) return false;
 	for (let i = 0; i < needle.length; i++) if (haystack[i] !== needle[i]) return false;
@@ -11999,8 +11922,7 @@ function stringLength(str) {
 	}
 	return count;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+// servers/json/node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 init_main();
 var FullTextDocument = class FullTextDocument {
 	constructor(uri, languageId, version, content) {
@@ -12242,8 +12164,7 @@ function getWellformedEdit(textEdit) {
 	};
 	return textEdit;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/jsonLanguageTypes.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/jsonLanguageTypes.js
 /**
 * Error codes used by diagnostics
 */
@@ -12288,8 +12209,7 @@ var ClientCapabilities;
 		labelDetailsSupport: true
 	} } } };
 })(ClientCapabilities || (ClientCapabilities = {}));
-//#endregion
-//#region servers/json/node_modules/vscode-uri/lib/esm/index.mjs
+// servers/json/node_modules/vscode-uri/lib/esm/index.mjs
 var t = { 975(t) {
 	function e(t) {
 		if ("string" != typeof t) throw new TypeError("Path must be a string. Received " + JSON.stringify(t));
@@ -12661,8 +12581,7 @@ var _;
 		return x.extname(t.path);
 	};
 })(_ || (_ = {}));
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/vocabularies.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/vocabularies.js
 const CORE_201909 = "https://json-schema.org/draft/2019-09/vocab/core";
 const CORE_202012 = "https://json-schema.org/draft/2020-12/vocab/core";
 const vocabularyKeywords = {
@@ -12816,8 +12735,7 @@ function isFormatAssertionEnabled(activeVocabularies, schemaDraft) {
 	if (schemaDraft !== void 0 && schemaDraft >= SchemaDraft.v2019_09) return false;
 	return true;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/parser/jsonParser.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/parser/jsonParser.js
 var import_main$2 = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -14170,8 +14088,7 @@ function parse(textDocument, config) {
 	}
 	return new JSONDocument(_root, problems, commentRanges);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/json.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/json.js
 function stringifyObject(obj, indent, stringifyLiteral) {
 	if (obj !== null && typeof obj === "object") {
 		const newIndent = indent + "	";
@@ -14201,8 +14118,7 @@ function stringifyObject(obj, indent, stringifyLiteral) {
 	}
 	return stringifyLiteral(obj);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonCompletion.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonCompletion.js
 var JSONCompletion = class {
 	constructor(schemaService, contributions = [], promiseConstructor = Promise, clientCapabilities = {}) {
 		this.schemaService = schemaService;
@@ -14929,8 +14845,7 @@ var JSONCompletion = class {
 		return this.labelDetailsSupport;
 	}
 };
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonHover.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonHover.js
 var JSONHover = class {
 	constructor(schemaService, contributions = [], promiseConstructor) {
 		this.schemaService = schemaService;
@@ -15001,8 +14916,7 @@ function toMarkdownCodeBlock(content) {
 	if (content.indexOf("`") !== -1) return "`` " + content + " ``";
 	return content;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonValidation.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonValidation.js
 var JSONValidation = class {
 	constructor(jsonSchemaService, promiseConstructor) {
 		this.jsonSchemaService = jsonSchemaService;
@@ -15117,8 +15031,7 @@ function toDiagnosticSeverity(severityLevel) {
 		case "ignore": return;
 	}
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/colors.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/colors.js
 const Digit0 = 48;
 const Digit9 = 57;
 const a = 97;
@@ -15159,8 +15072,7 @@ function colorFromHex(text) {
 		};
 	}
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonDocumentSymbols.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonDocumentSymbols.js
 var JSONDocumentSymbols = class {
 	constructor(schemaService) {
 		this.schemaService = schemaService;
@@ -15397,8 +15309,7 @@ function getRange(document, node) {
 function getName(node) {
 	return getNodeValue(node) || import_main$2.t("<empty>");
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
 const schemaContributions = {
 	schemaAssociations: [],
 	schemas: {
@@ -16091,8 +16002,7 @@ for (const schemaName in schemaContributions.schemas) {
 		if (description) propertyObject["description"] = description;
 	}
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/glob.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/glob.js
 function createRegex(glob, opts) {
 	if (typeof glob !== "string") throw new TypeError("Expected a string");
 	const str = String(glob);
@@ -16164,8 +16074,7 @@ function createRegex(glob, opts) {
 	if (!flags || !~flags.indexOf("g")) reStr = "^" + reStr + "$";
 	return new RegExp(reStr, flags);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonSchemaService.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonSchemaService.js
 init_main();
 const hasSchemePattern = /^[A-Za-z][A-Za-z0-9+\-.+]*:\/.*/.source;
 const hasSchemeRegex = new RegExp(hasSchemePattern);
@@ -16977,8 +16886,7 @@ function toDisplayString(url) {
 	} catch (e) {}
 	return url;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonFolding.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonFolding.js
 function getFoldingRanges(document, context) {
 	const ranges = [];
 	const nestingLevels = [];
@@ -17087,8 +16995,7 @@ function getFoldingRanges(document, context) {
 	}
 	return result;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonSelectionRanges.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonSelectionRanges.js
 function getSelectionRanges(document, positions, doc) {
 	function getSelectionRange(position) {
 		let offset = document.offsetAt(position);
@@ -17130,8 +17037,7 @@ function getSelectionRanges(document, positions, doc) {
 	}
 	return positions.map(getSelectionRange);
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/format.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/format.js
 function format(documentToFormat, formattingOptions, formattingRange) {
 	let range = void 0;
 	if (formattingRange) {
@@ -17152,8 +17058,7 @@ function format(documentToFormat, formattingOptions, formattingRange) {
 		return TextEdit$1.replace(Range.create(documentToFormat.positionAt(edit.offset), documentToFormat.positionAt(edit.offset + edit.length)), edit.content);
 	});
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/propertyTree.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/propertyTree.js
 var Container;
 (function(Container) {
 	Container[Container["Object"] = 0] = "Object";
@@ -17203,8 +17108,7 @@ function binarySearchOnPropertyArray(propertyTreeArray, propertyTree, compare_fn
 	}
 	return -m - 1;
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/sort.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/utils/sort.js
 function sort(documentToSort, formattingOptions) {
 	const options = {
 		...formattingOptions,
@@ -17405,7 +17309,7 @@ function sortProperties(properties) {
 function updateSortingQueue(queue, propertyTree, beginningLineNumber) {
 	if (propertyTree.childrenProperties.length === 0) return;
 	if (propertyTree.type === Container.Object) {
-		let minimumBeginningLineNumber = Infinity;
+		let minimumBeginningLineNumber = 1e400;
 		for (const childProperty of propertyTree.childrenProperties) if (childProperty.beginningLineNumber < minimumBeginningLineNumber) minimumBeginningLineNumber = childProperty.beginningLineNumber;
 		const diff = minimumBeginningLineNumber - propertyTree.beginningLineNumber;
 		beginningLineNumber = beginningLineNumber + diff;
@@ -17416,7 +17320,7 @@ function updateSortingQueue(queue, propertyTree, beginningLineNumber) {
 function updateSortingQueueForArrayProperties(queue, propertyTree, beginningLineNumber) {
 	for (const subObject of propertyTree.childrenProperties) {
 		if (subObject.type === Container.Object) {
-			let minimumBeginningLineNumber = Infinity;
+			let minimumBeginningLineNumber = 1e400;
 			for (const childProperty of subObject.childrenProperties) if (childProperty.beginningLineNumber < minimumBeginningLineNumber) minimumBeginningLineNumber = childProperty.beginningLineNumber;
 			const diff = minimumBeginningLineNumber - subObject.beginningLineNumber;
 			queue.push(new SortingRange(beginningLineNumber + subObject.beginningLineNumber - propertyTree.beginningLineNumber + diff, subObject.childrenProperties));
@@ -17430,8 +17334,7 @@ var SortingRange = class {
 		this.propertyTreeArray = propertyTreeArray;
 	}
 };
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonLinks.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/services/jsonLinks.js
 function findLinks(document, doc) {
 	const links = [];
 	doc.visit((node) => {
@@ -17545,8 +17448,7 @@ function parseJSONPointer(path) {
 function unescape(str) {
 	return str.replace(/~1/g, "/").replace(/~0/g, "~");
 }
-//#endregion
-//#region servers/json/node_modules/vscode-json-languageservice/lib/esm/jsonLanguageService.js
+// servers/json/node_modules/vscode-json-languageservice/lib/esm/jsonLanguageService.js
 function getLanguageService(params) {
 	const promise = params.promiseConstructor || Promise;
 	const jsonSchemaService = new JSONSchemaService(params.schemaRequestService, params.workspaceContext, promise);
@@ -17582,8 +17484,7 @@ function getLanguageService(params) {
 		sort: (document, options) => sort(document, options)
 	};
 }
-//#endregion
-//#region servers/json/languageModelCache.ts
+// servers/json/languageModelCache.ts
 function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
 	let languageModels = {};
 	let nModels = 0;
@@ -17647,8 +17548,7 @@ function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
 		}
 	};
 }
-//#endregion
-//#region servers/json/jsonServer.ts
+// servers/json/jsonServer.ts
 let SchemaAssociationNotification;
 (function(_SchemaAssociationNotification) {
 	_SchemaAssociationNotification.type = new import_api.NotificationType("json/schemaAssociations");
@@ -18765,4 +18665,3 @@ startServer(connection, {
 	http: getHTTPRequestService(),
 	configureHttpRequests
 });
-//#endregion

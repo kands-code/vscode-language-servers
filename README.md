@@ -16,7 +16,7 @@ each new VS Code release.
 Requires Node.js ≥ 24.
 
 ```sh
-npm install --global https://github.com/kands-code/vscode-language-servers/archive/refs/tags/1.145.2.tar.gz
+npm install --global https://github.com/kands-code/vscode-language-servers/archive/refs/tags/1.146.0.tar.gz
 ```
 
 This installs all three binaries. To install another version, change the tag.
