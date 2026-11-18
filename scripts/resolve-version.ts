@@ -1,9 +1,9 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 /**
- * Prints the VS Code version to extract: the one passed in, or the latest
- * stable from the VS Code update API.
+ * Prints the VS Code tag to extract: the argument if given, else the latest
+ * stable from the update API.
  *
- * Usage: node --experimental-strip-types scripts/resolve-version.ts [version]
+ * Usage: node scripts/resolve-version.ts [version]
  */
 
 const explicit = process.argv[2];

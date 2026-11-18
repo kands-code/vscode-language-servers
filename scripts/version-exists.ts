@@ -1,18 +1,15 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 /**
- * Checks whether a version tag already exists on the remote repository.
+ * Prints skip=true when the version tag already exists on origin.
  *
- * Usage: node --experimental-strip-types scripts/version-exists.ts <version>
- *
- * Prints `skip=true` or `skip=false` on stdout. Exits non-zero only on
- * failure (missing argument, git error).
+ * Usage: node scripts/version-exists.ts <version>
  */
 
 import { spawnSync } from "node:child_process";
 
 const version = process.argv[2];
 if (!version) {
-  console.error("Usage: node --experimental-strip-types scripts/version-exists.ts <version>");
+  console.error("Usage: node scripts/version-exists.ts <version>");
   process.exit(1);
 }
 

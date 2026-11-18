@@ -1,8 +1,8 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 /**
  * Smoke-tests each bundled language server over LSP stdio.
  *
- * Usage: node --experimental-strip-types scripts/smoke-test.ts [repo-root]
+ * Usage: node scripts/smoke-test.ts [repo-root]
  */
 
 import { spawn } from "node:child_process";
@@ -23,11 +23,7 @@ const SERVERS = [
 
 const TIMEOUT_MS = 30_000;
 
-/**
- * The VS Code tag the bundles were extracted from, as recorded by
- * scripts/extract.ts. Warns when it does not match the package version, so a
- * release does not silently ship bundles from stale sources.
- */
+/** VS Code tag the bundles came from; CI requires it to match the package version. */
 function sourceTag(): string {
   let tag = "unknown";
   try {
@@ -36,11 +32,13 @@ function sourceTag(): string {
     return "unknown (servers/.vscode-tag missing; run npm run extract)";
   }
   const version = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")).version as string;
-  // Hotfix releases use a suffix (1.140.0-hotfix.1) on the same VS Code tag.
+  // Hotfix releases use a suffix (1.146.0-hotfix.1) on the same VS Code tag.
   if (version !== tag && version.split("-")[0] !== tag) {
-    console.warn(
-      `  [warn] bundles were extracted from VS Code ${tag}, but package.json is ${version}`,
-    );
+    const message = `bundles were extracted from VS Code ${tag}, but package.json is ${version}`;
+    if (process.env.CI) {
+      throw new Error(`${message}; bump the package version before building`);
+    }
+    console.warn(`  [warn] ${message}`);
   }
   return tag;
 }
@@ -145,6 +143,46 @@ async function readResponse(
   }
 }
 
+/** Checks the TypeScript-backed embedded `<script>` completion path. */
+async function checkEmbeddedScriptCompletion(
+  writer: WritableStreamDefaultWriter<Uint8Array>,
+  messages: MessageReader,
+) {
+  const text = ["<script>", "const value = 1;", "value.", "</script>", ""].join("\n");
+  await writer.write(
+    frame({
+      jsonrpc: "2.0",
+      method: "textDocument/didOpen",
+      params: {
+        textDocument: { uri: "file:///smoke-test.html", languageId: "html", version: 1, text },
+      },
+    }),
+  );
+  await writer.write(
+    frame({
+      jsonrpc: "2.0",
+      id: 2,
+      method: "textDocument/completion",
+      params: {
+        textDocument: { uri: "file:///smoke-test.html" },
+        position: { line: 2, character: 6 },
+      },
+    }),
+  );
+
+  const response = await readResponse(messages, 2);
+  const result = response.result as { items?: Array<{ label?: string }> } | null;
+  const labels = (result?.items ?? []).map((item) => item.label);
+  if (!labels.includes("toFixed")) {
+    throw new Error(
+      `embedded <script> completion returned no TypeScript lib members: ${JSON.stringify(
+        labels.slice(0, 10),
+      )}`,
+    );
+  }
+  console.log("  embedded <script> completion OK");
+}
+
 async function smokeTest(server: { name: string; entry: string }) {
   console.log(`==> Smoke testing ${server.name} (${server.entry})`);
 
@@ -180,8 +218,12 @@ async function smokeTest(server: { name: string; entry: string }) {
 
     await writer.write(frame({ jsonrpc: "2.0", method: "initialized", params: {} }));
 
-    await writer.write(frame({ jsonrpc: "2.0", id: 2, method: "shutdown" }));
-    const shutdown = await readResponse(messages, 2);
+    if (server.name === "html") {
+      await checkEmbeddedScriptCompletion(writer, messages);
+    }
+
+    await writer.write(frame({ jsonrpc: "2.0", id: 3, method: "shutdown" }));
+    const shutdown = await readResponse(messages, 3);
     if (shutdown.result !== null) {
       throw new Error(`expected shutdown result null, got ${JSON.stringify(shutdown.result)}`);
     }

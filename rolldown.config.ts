@@ -1,11 +1,10 @@
 import { defineConfig } from "rolldown";
 
 /**
- * Bundles each extracted language server into a single CJS file under dist/.
+ * Bundles each server into dist/<name>.cjs.
  *
  * `typescript` stays external: the html server reads its lib.*.d.ts files from
- * disk at runtime, so the real package must be installed (it is a production
- * dependency in package.json).
+ * disk at runtime.
  */
 const server = (name: string) => ({
   input: `servers/${name}/node/${name}ServerMain.ts`,
@@ -17,8 +16,8 @@ const server = (name: string) => ({
     // npm links `bin` entries directly on POSIX, so the bundle must be
     // directly executable.
     banner: "#!/usr/bin/env node",
-    // Inline the few lazy dynamic imports (e.g. javascriptLibs) so each
-    // server stays a single file usable as a bin entry.
+    // Inline lazy dynamic imports (e.g. javascriptLibs) so each server stays a
+    // single file usable as a bin entry.
     codeSplitting: false,
   },
 });

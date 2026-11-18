@@ -1,14 +1,12 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 /**
- * Builds the runnable sources in `servers/` from the VS Code sources.
+ * Extracts the CSS, HTML, and JSON servers from a VS Code tag into `servers/`.
  *
- * Usage: node --experimental-strip-types scripts/extract.ts <vscode-tag>
+ * Usage: node scripts/extract.ts <vscode-tag>
  *
- * The upstream sources use `.js` ESM specifiers, which both Rolldown and tsc
- * (moduleResolution: bundler) resolve to their `.ts` counterparts, so no
- * import rewriting is needed. Each server gets its own package.json with
- * exact dependency versions from the VS Code package-lock, so per-server
- * version pins are preserved.
+ * Upstream `.js` import specifiers resolve to `.ts` under Rolldown and tsc, so
+ * imports are not rewritten. Each server's package.json pins the versions from
+ * VS Code's extensions pnpm lock.
  */
 
 import {
@@ -23,14 +21,14 @@ import {
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse as parseYaml } from "yaml";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-// Lowest VS Code tag this project verifies and maintains.
-const MIN_SUPPORTED_TAG = "1.138.0";
-// Pinned to the last JavaScript-based TypeScript. npm's `typescript@7` is the
-// Go-based native compiler and is not a drop-in for the JS `ts.*`
-// LanguageService API that html/modes/javascriptMode.ts relies on for
-// embedded <script> completion.
+// The extensions pnpm lock this script reads first appeared in VS Code 1.146.0.
+const MIN_SUPPORTED_TAG = "1.146.0";
+// The html server needs TypeScript's JS compiler API and lib.*.d.ts files;
+// the native 7.x package has neither.
+const TYPESCRIPT_MAJOR = 6;
 
 const SERVERS = [
   { name: "css", serverDir: "extensions/css-language-features/server" },
@@ -38,11 +36,9 @@ const SERVERS = [
   { name: "json", serverDir: "extensions/json-language-features/server" },
 ];
 
-// Names that exist only as types in their packages. Re-exporting such a name
-// as a value makes the bundler fail at link time ("Missing export"), so
-// re-exports are split into `export type` during extraction. Extend this list
-// when a new VS Code version introduces another type-only re-export (the
-// build fails with a clear "Missing export" error naming it).
+// Type-only names; re-exporting them as values fails at bundle link time, so
+// they are split into `export type` during extraction. Add new ones when the
+// build reports a missing export.
 const TYPE_ONLY = new Set([
   "Definition",
   "DefinitionLink",
@@ -117,26 +113,132 @@ function walkTs(dir: string, fn: (file: string) => void) {
   }
 }
 
-/**
- * Exact versions of every package in the server's package-lock. Used as
- * exact (no-range) dependencies so installs are deterministic.
- */
-function buildDependencies(serverRoot: string): Record<string, string> {
-  const lock = JSON.parse(readFileSync(join(serverRoot, "package-lock.json"), "utf8"));
-  const packages = (lock.packages ?? {}) as Record<string, { version?: string }>;
+type LockDependency = { specifier?: string; version?: string };
+type LockImporter = { dependencies?: Record<string, LockDependency> };
+type LockSnapshot = {
+  dependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+};
+type PnpmLock = {
+  importers?: Record<string, LockImporter>;
+  snapshots?: Record<string, LockSnapshot>;
+};
+
+/** `1.2.3(peer@4.5.6)` -> `1.2.3`. */
+function baseVersion(version: string): string {
+  return version.split("(")[0];
+}
+
+function loadPnpmLock(vscodeDir: string): PnpmLock {
+  const lockPath = join(vscodeDir, "extensions", "pnpm-lock.yaml");
+  if (!existsSync(lockPath)) {
+    throw new Error(`Missing ${lockPath} (VS Code 1.146.0+ ships it)`);
+  }
+  return parseYaml(readFileSync(lockPath, "utf8")) as PnpmLock;
+}
+
+function findSnapshot(lock: PnpmLock, name: string, version: string): LockSnapshot | undefined {
+  const snapshots = lock.snapshots ?? {};
+  const exact = `${name}@${version}`;
+  const key = snapshots[exact]
+    ? exact
+    : Object.keys(snapshots).find((candidate) => candidate.startsWith(`${exact}(`));
+  return key ? snapshots[key] : undefined;
+}
+
+/** Pins a server's runtime dependencies, including the transitive closure. */
+function buildDependencies(lock: PnpmLock, serverDir: string): Record<string, string> {
+  const importerName = serverDir.replace(/^extensions\//, "");
+  const importer = lock.importers?.[importerName];
+  if (!importer) {
+    throw new Error(`No "${importerName}" importer in extensions/pnpm-lock.yaml`);
+  }
+
+  // Breadth-first, so the direct dependency's version wins over nested ones.
   const deps: Record<string, string> = {};
-  for (const [key, meta] of Object.entries(packages)) {
-    if (!key.startsWith("node_modules/")) {
-      continue;
+  const queue = Object.entries(importer.dependencies ?? {})
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, meta]) => [name, baseVersion(meta.version ?? "")] as [string, string]);
+
+  for (let i = 0; i < queue.length; i++) {
+    const [name, version] = queue[i];
+    if (!version) {
+      throw new Error(`No resolved version for ${name} in extensions/pnpm-lock.yaml`);
     }
-    const name = key.slice("node_modules/".length);
-    if (!name.includes("node_modules") && !meta.dev && meta.version) {
-      deps[name] = meta.version;
+    if (deps[name] !== undefined) continue;
+    deps[name] = version;
+
+    const snapshot = findSnapshot(lock, name, version);
+    if (!snapshot) {
+      throw new Error(`No ${name}@${version} snapshot in extensions/pnpm-lock.yaml`);
+    }
+    for (const section of [snapshot.dependencies, snapshot.optionalDependencies]) {
+      for (const [depName, depVersion] of Object.entries(section ?? {}).sort()) {
+        queue.push([depName, baseVersion(depVersion)]);
+      }
     }
   }
-  // typescript comes from the root package.json (pinned to TS_VERSION).
+
+  // TypeScript is pinned once in the root package.json; see syncTypeScript().
   delete deps["typescript"];
   return deps;
+}
+
+function installedTypescriptVersion(): string | null {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(join(ROOT, "node_modules", "typescript", "package.json"), "utf8"),
+    ) as { version?: string };
+    return pkg.version ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Uses the same TypeScript version as VS Code's built-in extensions. */
+function syncTypeScript(lock: PnpmLock) {
+  const entry = lock.importers?.["."]?.dependencies?.typescript;
+  if (!entry?.version) {
+    throw new Error("extensions/pnpm-lock.yaml does not pin typescript");
+  }
+
+  const specifier = entry.specifier ?? "";
+  if (!/^[\s0-9.xX*^~<>=|-]+$/.test(specifier)) {
+    throw new Error(`Cannot follow typescript specifier "${specifier}"; expected a registry range`);
+  }
+
+  const version = baseVersion(entry.version);
+  const major = Number(version.split(".")[0]);
+  if (!/^\d+\.\d+\.\d+/.test(version) || major !== TYPESCRIPT_MAJOR) {
+    throw new Error(
+      `typescript ${version} is not the JavaScript ${TYPESCRIPT_MAJOR}.x compiler the html server needs`,
+    );
+  }
+
+  const rootPackage = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")) as {
+    dependencies?: Record<string, string>;
+  };
+  const declared = rootPackage.dependencies?.typescript;
+  if (declared !== version || installedTypescriptVersion() !== version) {
+    console.log(`==> typescript ${declared ?? "(missing)"} -> ${version}`);
+    const r = spawnSync(
+      "npm",
+      ["install", "--save-exact", "--no-audit", "--no-fund", `typescript@${version}`],
+      { cwd: ROOT, stdio: "inherit" },
+    );
+    if (r.status !== 0) {
+      throw new Error(`npm install typescript@${version} failed`);
+    }
+  }
+
+  const libDir = join(ROOT, "node_modules", "typescript", "lib");
+  if (
+    !existsSync(join(libDir, "typescript.js")) ||
+    !existsSync(join(libDir, "lib.es2020.full.d.ts"))
+  ) {
+    throw new Error(`typescript@${version} is missing its compiler or lib.*.d.ts files`);
+  }
+  console.log(`==> TypeScript ${version}`);
 }
 
 /** Node-friendly rewrite of the html server's javascriptLibs.ts. */
@@ -150,9 +252,8 @@ const contents: { [name: string]: string } = {};
 
 const nodeRequire = createRequire(import.meta.url);
 
-// Best-effort: embedded <script> JS/TS completion degrades gracefully if
-// this fails. require.resolve yields .../typescript/lib/typescript.js, so
-// dirname is the directory holding lib.*.d.ts.
+// Best-effort: embedded <script> completion degrades gracefully if this fails.
+// require.resolve yields .../typescript/lib/typescript.js.
 const TS_LIB_SOURCE = (() => {
   try {
     return dirname(nodeRequire.resolve("typescript"));
@@ -161,8 +262,7 @@ const TS_LIB_SOURCE = (() => {
   }
 })();
 
-// The bundle ships at dist/<name>.cjs; jquery.d.ts is copied to lib/ at the
-// package root.
+// The bundle ships at dist/<name>.cjs; jquery.d.ts is copied to lib/.
 const JQUERY_PATH = join(
   dirname(fileURLToPath(import.meta.url)),
   "..",
@@ -206,6 +306,7 @@ async function prepareServer(
   server: { name: string; serverDir: string },
   vscodeDir: string,
   serversDir: string,
+  lock: PnpmLock,
 ) {
   const { name, serverDir } = server;
   console.log(`==> Extracting ${name}`);
@@ -215,8 +316,8 @@ async function prepareServer(
   rmSync(dest, { recursive: true, force: true });
   copyServerSrc(join(serverRoot, "src"), dest);
 
-  // html: ship jquery.d.ts and swap in the Node javascriptLibs.ts (the
-  // upstream one hard-codes VS Code's node_modules layout).
+  // html: ship jquery.d.ts and replace the upstream javascriptLibs.ts, which
+  // assumes VS Code's node_modules layout.
   if (name === "html") {
     const libSrc = join(serverRoot, "lib");
     const libDest = join(dest, "lib");
@@ -239,7 +340,7 @@ async function prepareServer(
     name: `vscode-language-servers-${name}-src`,
     version: "0.0.0",
     private: true,
-    dependencies: buildDependencies(serverRoot),
+    dependencies: buildDependencies(lock, serverDir),
   };
   writeFileSync(join(dest, "package.json"), JSON.stringify(pkg, null, 2) + "\n");
   npmInstall(dest);
@@ -281,11 +382,7 @@ function cloneVscode(version: string, vscodeDir: string) {
   throw new Error(`git clone failed after 3 attempts (last exit ${lastStatus})`);
 }
 
-/**
- * Ensure a shallow sparse clone of microsoft/vscode is checked out at
- * `version`. An existing clone at another tag is reused by fetching just
- * that tag instead of re-cloning the repository from scratch.
- */
+/** Ensures the shallow sparse microsoft/vscode clone is checked out at `version`. */
 function ensureVscodeClone(version: string, vscodeDir: string) {
   const existing = existsSync(join(vscodeDir, ".git"));
 
@@ -328,7 +425,7 @@ function ensureVscodeClone(version: string, vscodeDir: string) {
 async function main() {
   const tag = process.argv[2];
   if (!tag || !/^\d+\.\d+\.\d+$/.test(tag)) {
-    console.error("Usage: node --experimental-strip-types scripts/extract.ts <vscode-tag>");
+    console.error("Usage: node scripts/extract.ts <vscode-tag>");
     process.exit(1);
   }
   if (compareVersions(tag, MIN_SUPPORTED_TAG) < 0) {
@@ -343,8 +440,7 @@ async function main() {
 
   ensureVscodeClone(tag, vscodeDir);
 
-  // Sparse checkout always includes the repo root (LICENSE.txt), so only
-  // the server folders need listing here.
+  // Root files are included automatically; list only the server directories.
   const sparse = spawnSync(
     "git",
     ["-C", vscodeDir, "sparse-checkout", "set", ...SERVERS.map((s) => s.serverDir)],
@@ -354,22 +450,26 @@ async function main() {
     throw new Error(`git sparse-checkout failed (exit ${sparse.status})`);
   }
 
+  // Cone mode also checks out files beside those directories, including the
+  // extensions pnpm lock.
+  const lock = loadPnpmLock(vscodeDir);
+  syncTypeScript(lock);
+
   rmSync(serversDir, { recursive: true, force: true });
   mkdirSync(serversDir, { recursive: true });
 
   for (const server of SERVERS) {
-    await prepareServer(server, vscodeDir, serversDir);
+    await prepareServer(server, vscodeDir, serversDir, lock);
   }
 
-  // Ship VS Code's MIT license notice with the extracted code.
+  // Ship VS Code's license with the extracted code.
   try {
     copyFileSync(join(vscodeDir, "LICENSE.txt"), join(ROOT, "LICENSE.vscode.txt"));
   } catch {
     console.warn("  [warn] VS Code LICENSE.txt not found; skipping license copy");
   }
 
-  // Record the source tag so build/smoke output says which VS Code release
-  // the bundles were extracted from.
+  // Source tag for build and smoke-test output.
   writeFileSync(join(serversDir, ".vscode-tag"), tag + "\n");
 
   console.log("\n=== Sources ready ===");

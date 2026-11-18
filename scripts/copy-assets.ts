@@ -1,11 +1,8 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 /**
- * Copies runtime asset files to lib/ at the package root.
+ * Copies runtime assets to lib/ at the package root.
  *
- * The html server reads jquery.d.ts from disk at runtime (from ../lib
- * relative to dist/<name>.cjs), so it must ship in the published package.
- *
- * Usage: node --experimental-strip-types scripts/copy-assets.ts
+ * Usage: node scripts/copy-assets.ts
  */
 
 import { copyFileSync, mkdirSync } from "node:fs";
